@@ -1,0 +1,1404 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="mobile-web-app-capable" content="yes">
+<title>Lunara — Prototipo</title>
+<style>
+  * { box-sizing: border-box; -webkit-font-smoothing: antialiased; }
+  html, body { margin: 0; height: 100%; }
+  body {
+    background: #0a0a0a;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    min-height: 100vh; gap: 18px; padding: 32px 16px;
+    font-family: 'Manrope', -apple-system, sans-serif;
+    overflow-x: hidden;
+  }
+  a { color: inherit; }
+
+  /* Light is the app's designed default. Dark only follows the phone's system setting, or the in-app toggle. */
+  :root {
+    --bg: #ffffff; --surface: #fafafa; --surface-raised: #ffffff;
+    --text: #0a0a0a; --text-muted: rgba(10,10,10,0.68); --text-faint: rgba(10,10,10,0.52);
+    --accent-text: #ffffff;
+    --accent-red: oklch(0.5 0.19 22); --accent-red-light: oklch(0.62 0.17 22); --accent-red-soft: oklch(0.5 0.19 22 / 0.1);
+    --accent-blue: oklch(0.5 0.19 250); --accent-blue-soft: oklch(0.5 0.19 250 / 0.1); --accent-blue-panel: oklch(0.5 0.19 250 / 0.06); --accent-blue-border: oklch(0.5 0.19 250 / 0.18);
+    --accent-green: oklch(0.46 0.13 165); --accent-green-light: oklch(0.6 0.12 165); --accent-green-soft: oklch(0.46 0.13 165 / 0.15);
+    --glass-bg: rgba(255,255,255,0.55); --glass-border: rgba(255,255,255,0.7); --glass-shadow: 0 8px 32px rgba(0,0,0,0.06);
+    --clay-shadow: 9px 9px 20px rgba(0,0,0,0.07), -7px -7px 16px rgba(255,255,255,0.95);
+    --clay-shadow-inset: inset 4px 4px 9px rgba(0,0,0,0.06), inset -3px -3px 7px rgba(255,255,255,0.9);
+    --red-shadow: 0 10px 26px oklch(0.5 0.19 22 / 0.28), 0 2px 8px rgba(0,0,0,0.12);
+    --fab-shadow: 0 12px 28px oklch(0.5 0.19 22 / 0.32), 0 3px 10px rgba(0,0,0,0.16);
+    --row-border: 1px solid rgba(10,10,10,0.06);
+    --plus-bg: #f7f2f2;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #000000; --surface: #0c0c0c; --surface-raised: #141414;
+      --text: #f7f5f6; --text-muted: rgba(247,245,246,0.62); --text-faint: rgba(247,245,246,0.5);
+      --accent-text: #0a0a0a;
+      --accent-red: oklch(0.68 0.19 22); --accent-red-light: oklch(0.78 0.15 22); --accent-red-soft: oklch(0.68 0.19 22 / 0.16);
+      --accent-blue: oklch(0.68 0.19 250); --accent-blue-soft: oklch(0.68 0.19 250 / 0.16); --accent-blue-panel: oklch(0.68 0.19 250 / 0.1); --accent-blue-border: oklch(0.68 0.19 250 / 0.25);
+      --accent-green: oklch(0.64 0.14 165); --accent-green-light: oklch(0.76 0.12 165); --accent-green-soft: oklch(0.64 0.14 165 / 0.22);
+      --glass-bg: rgba(255,255,255,0.045); --glass-border: rgba(255,255,255,0.09); --glass-shadow: 0 8px 32px rgba(0,0,0,0.55);
+      --clay-shadow: 9px 9px 20px rgba(0,0,0,0.65), -7px -7px 16px rgba(255,255,255,0.025);
+      --clay-shadow-inset: inset 4px 4px 9px rgba(0,0,0,0.6), inset -3px -3px 7px rgba(255,255,255,0.03);
+      --red-shadow: 0 10px 26px oklch(0.68 0.19 22 / 0.35), 0 2px 8px rgba(0,0,0,0.5);
+      --fab-shadow: 0 12px 28px oklch(0.68 0.19 22 / 0.4), 0 3px 10px rgba(0,0,0,0.6);
+      --row-border: 1px solid rgba(255,255,255,0.07);
+      --plus-bg: #0c0c0c;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #000000; --surface: #0c0c0c; --surface-raised: #141414;
+    --text: #f7f5f6; --text-muted: rgba(247,245,246,0.62); --text-faint: rgba(247,245,246,0.5);
+    --accent-text: #0a0a0a;
+    --accent-red: oklch(0.68 0.19 22); --accent-red-light: oklch(0.78 0.15 22); --accent-red-soft: oklch(0.68 0.19 22 / 0.16);
+    --accent-blue: oklch(0.68 0.19 250); --accent-blue-soft: oklch(0.68 0.19 250 / 0.16); --accent-blue-panel: oklch(0.68 0.19 250 / 0.1); --accent-blue-border: oklch(0.68 0.19 250 / 0.25);
+    --accent-green: oklch(0.64 0.14 165); --accent-green-light: oklch(0.76 0.12 165); --accent-green-soft: oklch(0.64 0.14 165 / 0.22);
+    --glass-bg: rgba(255,255,255,0.045); --glass-border: rgba(255,255,255,0.09); --glass-shadow: 0 8px 32px rgba(0,0,0,0.55);
+    --clay-shadow: 9px 9px 20px rgba(0,0,0,0.65), -7px -7px 16px rgba(255,255,255,0.025);
+    --clay-shadow-inset: inset 4px 4px 9px rgba(0,0,0,0.6), inset -3px -3px 7px rgba(255,255,255,0.03);
+    --red-shadow: 0 10px 26px oklch(0.68 0.19 22 / 0.35), 0 2px 8px rgba(0,0,0,0.5);
+    --fab-shadow: 0 12px 28px oklch(0.68 0.19 22 / 0.4), 0 3px 10px rgba(0,0,0,0.6);
+    --row-border: 1px solid rgba(255,255,255,0.07);
+    --plus-bg: #0c0c0c;
+  }
+
+  .hint { color: rgba(255,255,255,0.4); font-size: 12.5px; text-align: center; max-width: 390px; }
+
+  .phone {
+    position: relative; width: 390px; height: 844px; border-radius: 46px;
+    overflow: hidden; box-shadow: 0 40px 100px rgba(0,0,0,0.6), 0 0 0 8px #050505;
+    background: var(--bg);
+  }
+  .screen {
+    position: absolute; inset: 0; width: 390px; height: 844px; overflow: hidden;
+    background: var(--bg); color: var(--text);
+    opacity: 0; pointer-events: none; z-index: 1;
+    transition: opacity 0.16s ease;
+  }
+  .screen.active { opacity: 1; pointer-events: auto; z-index: 2; }
+  .scroll-area { position: absolute; inset: 0; overflow-y: auto; overflow-x: hidden; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+  .scroll-area::-webkit-scrollbar { display: none; }
+  .pad { position: relative; padding: 30px 24px 0; }
+  .pad.tall { padding-bottom: 110px; }
+  .blob { position: absolute; border-radius: 50%; filter: blur(90px); pointer-events: none; }
+
+  .brand { display: flex; align-items: center; gap: 8px; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 14px; letter-spacing: 4px; }
+  .kicker { font-size: 10.5px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: var(--text-faint); }
+  h1.title { margin: 6px 0 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 26px; letter-spacing: -0.4px; }
+
+  .glass { background: var(--glass-bg); border: 1px solid var(--glass-border); backdrop-filter: blur(22px); -webkit-backdrop-filter: blur(22px); border-radius: 22px; box-shadow: var(--glass-shadow); }
+  .clay-icon { background: var(--surface-raised); box-shadow: var(--clay-shadow); border-radius: 14px; display: flex; align-items: center; justify-content: center; }
+
+  .btn-primary { border: none; cursor: pointer; width: 100%; padding: 17px; border-radius: 20px; background: var(--accent-red); color: var(--accent-text); font-family: 'Bricolage Grotesque', sans-serif; font-size: 15px; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 9px; box-shadow: var(--red-shadow); }
+  .btn-clay { border: none; cursor: pointer; width: 100%; padding: 16px; border-radius: 18px; background: var(--surface-raised); box-shadow: var(--clay-shadow); color: var(--text); font-family: 'Bricolage Grotesque', sans-serif; font-size: 14.5px; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 10px; }
+  .btn-glass { border: 1px solid var(--glass-border); cursor: pointer; width: 100%; padding: 15px; border-radius: 20px; background: var(--glass-bg); backdrop-filter: blur(22px); color: var(--text); font-family: 'Bricolage Grotesque', sans-serif; font-size: 14.5px; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 9px; }
+
+  .navbar-wrap { position: absolute; left: 24px; right: 24px; bottom: 22px; height: 72px; }
+  .navbar { position: absolute; inset: 0; border-radius: 26px; background: var(--glass-bg); border: 1px solid var(--glass-border); backdrop-filter: blur(24px); box-shadow: var(--glass-shadow); display: flex; align-items: center; justify-content: space-between; padding: 0 24px; }
+  .nav-icon { color: var(--text-faint); display: flex; align-items: center; justify-content: center; cursor: pointer; width: 44px; height: 44px; border-radius: 15px; transition: color 0.12s ease, background-color 0.12s ease; }
+  .nav-icon.active { background: var(--surface-raised); box-shadow: var(--clay-shadow); color: var(--accent-red); }
+  .nav-gap { width: 56px; flex-shrink: 0; }
+  .fab { position: absolute; top: -22px; left: 50%; transform: translateX(-50%); width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: var(--fab-shadow); }
+  .fab.filled { background: var(--accent-red); color: var(--accent-text); animation: fabBreathe 2.6s ease-in-out infinite; }
+  @keyframes fabBreathe { 0%, 100% { box-shadow: var(--fab-shadow); } 50% { box-shadow: var(--fab-shadow), 0 0 0 8px oklch(0.68 0.19 22 / 0.12); } }
+
+  .badge-dot { animation: badgeDotPulse 1.6s ease-in-out infinite; }
+  @keyframes badgeDotPulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.45; transform: scale(1.3); } }
+
+  .pulse-dot { position: absolute; inset: 3px; border-radius: 50%; background: #fff; box-shadow: 0 0 6px rgba(255,255,255,0.85); }
+  .pulse-ring { position: absolute; inset: 0; border-radius: 50%; background: var(--accent-red); animation: pulseRing 1.8s ease-out infinite; }
+  @keyframes pulseRing { 0% { transform: scale(0.7); opacity: 0.55; } 100% { transform: scale(2.2); opacity: 0; } }
+  .fab.outline { background: var(--surface-raised); border: 2.5px solid var(--accent-red); color: var(--accent-red); }
+
+  .chip { display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 14px 6px; border-radius: 18px; background: var(--surface-raised); box-shadow: var(--clay-shadow); color: var(--text-muted); cursor: pointer; transition: background-color 0.12s ease, color 0.12s ease, box-shadow 0.12s ease; }
+  .chip.selected { background: var(--accent-red); color: var(--accent-text); box-shadow: 0 4px 14px oklch(0.68 0.19 22 / 0.3); }
+  .chip span { font-size: 10.5px; font-weight: 600; text-align: center; line-height: 1.2; }
+
+  .severity { display: flex; gap: 8px; }
+  .severity-pill { flex: 1; text-align: center; padding: 9px 0; border-radius: 12px; background: var(--surface-raised); box-shadow: var(--clay-shadow); color: var(--text-faint); font-size: 12px; font-weight: 600; cursor: pointer; transition: background-color 0.12s ease, color 0.12s ease; }
+  .severity-pill.active { background: var(--accent-red); color: var(--accent-text); font-weight: 700; box-shadow: none; }
+
+  .switch { width: 40px; height: 24px; border-radius: 12px; background: var(--accent-red); position: relative; cursor: pointer; flex-shrink: 0; transition: background-color 0.15s ease; }
+  .switch.off { background: var(--surface-raised); box-shadow: var(--clay-shadow); }
+  .switch .knob { position: absolute; top: 2px; right: 2px; width: 20px; height: 20px; border-radius: 50%; background: var(--accent-text); transition: right 0.15s ease, left 0.15s ease, background-color 0.15s ease; }
+  .switch.off .knob { right: auto; left: 2px; background: var(--text-faint); }
+
+  .row { display: flex; align-items: center; gap: 12px; padding: 14px 18px; }
+  .row + .row { border-top: var(--row-border); }
+
+  .lunara-slider { -webkit-appearance: none; appearance: none; width: 100%; height: 8px; border-radius: 6px; background: var(--surface); box-shadow: var(--clay-shadow-inset); outline: none; margin: 0; }
+  .lunara-slider::-webkit-slider-thumb { -webkit-appearance: none; width: 22px; height: 22px; border-radius: 50%; background: var(--surface-raised); box-shadow: var(--clay-shadow); border: 2px solid var(--accent-red); cursor: pointer; }
+  .lunara-slider::-moz-range-thumb { width: 22px; height: 22px; border-radius: 50%; background: var(--surface-raised); box-shadow: var(--clay-shadow); border: 2px solid var(--accent-red); cursor: pointer; }
+  .lunara-slider::-moz-range-track { background: transparent; height: 8px; border-radius: 6px; }
+
+  .lunara-date { border: none; background: transparent; font-family: 'Bricolage Grotesque', sans-serif; font-size: 17px; font-weight: 600; color: var(--text); outline: none; cursor: pointer; }
+  .lunara-date::-webkit-calendar-picker-indicator { filter: invert(0.35); cursor: pointer; }
+  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .lunara-date::-webkit-calendar-picker-indicator { filter: invert(0.85); } }
+  :root[data-theme="dark"] .lunara-date::-webkit-calendar-picker-indicator { filter: invert(0.85); }
+
+  .toast { position: absolute; left: 50%; bottom: 110px; transform: translateX(-50%) translateY(20px); opacity: 0; padding: 12px 20px; border-radius: 14px; background: var(--surface-raised); box-shadow: var(--clay-shadow); color: var(--text); font-size: 13px; font-weight: 700; transition: all 0.25s ease; pointer-events: none; z-index: 20; white-space: nowrap; }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  /* Respond on press, not release — feedback is instant, never waits for pointerup */
+  .btn-primary, .btn-clay, .btn-glass, .chip, .severity-pill, .nav-icon, .switch {
+    transition: transform 0.1s ease-out, background-color 0.12s ease, color 0.12s ease, box-shadow 0.12s ease;
+  }
+  .btn-primary:active, .btn-clay:active, .btn-glass:active { transform: scale(0.97); }
+  .chip:active { transform: scale(0.95); }
+  .severity-pill:active { transform: scale(0.93); }
+  .nav-icon:active { transform: scale(0.88); }
+  .fab { transition: transform 0.1s ease-out; }
+  .fab:active { transform: translateX(-50%) scale(0.92); }
+  .switch:active .knob { transform: scale(0.88); }
+  .clay-icon[style*="cursor:pointer"], .glass[style*="cursor:pointer"], .row[style*="cursor:pointer"] { transition: transform 0.1s ease-out, background-color 0.12s ease; }
+  .clay-icon[style*="cursor:pointer"]:active { transform: scale(0.9); }
+  .row[style*="cursor:pointer"]:active { background: var(--surface); }
+
+  /* Bottom sheets (Symptoms, Cuenta) — real drag physics, not a scripted animation */
+  .sheet { position: absolute; inset: 0; z-index: 40; pointer-events: none; }
+  .sheet-scrim { position: absolute; inset: 0; background: rgba(0,0,0,0.5); backdrop-filter: blur(3px); -webkit-backdrop-filter: blur(3px); opacity: 0; }
+  @media (prefers-reduced-transparency: reduce) {
+    .sheet-scrim { background: rgba(0,0,0,0.75); backdrop-filter: none; -webkit-backdrop-filter: none; }
+    .glass, .navbar { backdrop-filter: none !important; -webkit-backdrop-filter: none !important; }
+  }
+  .sheet-panel {
+    position: absolute; left: 0; right: 0; bottom: 0; max-height: 92%;
+    display: flex; flex-direction: column;
+    background: var(--bg); border-radius: 28px 28px 0 0;
+    box-shadow: 0 -24px 70px rgba(0,0,0,0.4);
+    transform: translateY(110%);
+    touch-action: none;
+  }
+  .sheet-handle { flex-shrink: 0; display: flex; align-items: center; justify-content: center; padding: 12px 0 4px; cursor: grab; }
+  .sheet-handle:active { cursor: grabbing; }
+  .sheet-grabber { width: 36px; height: 5px; border-radius: 3px; background: var(--text-faint); opacity: 0.5; }
+  .sheet-body { overflow-y: auto; overflow-x: hidden; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+  .sheet-body::-webkit-scrollbar { display: none; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .l-icon, .l-glow, .l-ring, .l-word, .l-tag, .l-dot, .badge-dot, .pulse-ring, .fab.filled { animation: none !important; }
+    .screen { transition: opacity 0.12s linear !important; }
+    .sheet-panel, .sheet-scrim { transition: none !important; }
+  }
+
+  @media (max-width: 440px) {
+    html, body { height: 100%; }
+    body { padding: 0; gap: 0; background: #000; }
+    .hint { display: none; }
+    .phone {
+      width: 100vw; height: 100dvh; max-width: none; max-height: none;
+      border-radius: 0; box-shadow: none;
+    }
+    .screen {
+      width: 100%; height: 100%;
+      padding-top: env(safe-area-inset-top);
+      padding-bottom: env(safe-area-inset-bottom);
+    }
+  }
+</style>
+
+<div class="phone" id="phone">
+
+  <!-- SPLASH -->
+  <section class="screen active" id="splash" onclick="skipSplash()" style="cursor:pointer;">
+    <style>
+      @keyframes lunaraScaleIn { from { opacity: 0.4; transform: scale(0.92); } to { opacity: 1; transform: scale(1); } }
+      @keyframes lunaraPulse { 0%,100% { opacity:0.2; transform:scale(1); } 50% { opacity:0.4; transform:scale(1.08); } }
+      @keyframes lunaraSpin { to { transform: rotate(360deg); } }
+      @keyframes lunaraFadeUp { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+      .l-icon { animation: lunaraScaleIn 0.35s ease-out both; }
+      .l-glow { animation: lunaraPulse 2.2s ease-in-out infinite; }
+      .l-ring { animation: lunaraSpin 2.6s linear infinite; }
+      .l-word { animation: lunaraFadeUp 0.3s ease-out both; animation-delay: 0.15s; }
+      .l-tag { animation: lunaraFadeUp 0.3s ease-out both; animation-delay: 0.25s; }
+      .l-dot { animation: lunaraDot 1.1s ease-in-out infinite; }
+      @keyframes lunaraDot { 0%,80%,100% { opacity:0.25; transform:scale(0.75); } 40% { opacity:1; transform:scale(1); } }
+    </style>
+    <div style="width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;">
+      <div style="position:relative;width:132px;height:132px;display:flex;align-items:center;justify-content:center;">
+        <div class="l-glow" style="position:absolute;inset:-18px;border-radius:50%;background:var(--accent-red);filter:blur(34px);"></div>
+        <svg class="l-ring" width="132" height="132" viewBox="0 0 132 132" style="position:absolute;">
+          <circle cx="66" cy="66" r="58" fill="none" stroke="var(--surface)" stroke-width="2.5"></circle>
+          <circle cx="66" cy="66" r="58" fill="none" stroke="var(--accent-red)" stroke-width="2.5" stroke-linecap="round" stroke-dasharray="80 284"></circle>
+          <circle cx="66" cy="66" r="58" fill="none" stroke="var(--accent-blue)" stroke-width="2.5" stroke-linecap="round" stroke-dasharray="50 314" stroke-dashoffset="-160"></circle>
+        </svg>
+        <div class="l-icon clay-icon" style="position:relative;width:66px;height:66px;border-radius:21px;">
+          <svg width="30" height="30" viewBox="0 0 24 24" fill="var(--accent-red)"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+        </div>
+      </div>
+      <span class="l-word" style="margin-top:28px;font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:19px;">LUNARA</span>
+      <span class="l-tag" style="margin-top:9px;font-size:12.5px;color:var(--text-muted);">Tu ciclo, sin adivinar</span>
+      <div style="position:absolute;bottom:64px;display:flex;gap:7px;">
+        <span class="l-dot" style="width:6px;height:6px;border-radius:50%;background:var(--accent-red);animation-delay:0s;"></span>
+        <span class="l-dot" style="width:6px;height:6px;border-radius:50%;background:var(--accent-red);animation-delay:0.2s;"></span>
+        <span class="l-dot" style="width:6px;height:6px;border-radius:50%;background:var(--accent-red);animation-delay:0.4s;"></span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ONBOARDING -->
+  <section class="screen" id="onboarding">
+   <div class="scroll-area">
+    <div style="width:100%;min-height:100%;position:relative;display:flex;flex-direction:column;justify-content:space-between;padding:30px 24px 34px;">
+      <div style="position:relative;" class="brand">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="var(--accent-red)"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+        LUNARA
+      </div>
+      <div style="position:relative;display:flex;flex-direction:column;gap:20px;">
+        <div style="text-align:center;">
+          <div style="display:inline-flex;align-items:center;gap:7px;padding:6px 12px 6px 8px;border-radius:999px;background:var(--accent-red-soft);margin-bottom:16px;">
+            <span style="width:6px;height:6px;border-radius:50%;background:var(--accent-red);display:inline-block;"></span>
+            <span style="font-size:10.5px;font-weight:700;letter-spacing:1.2px;color:var(--accent-red);text-transform:uppercase;">Precisión desde el día uno</span>
+          </div>
+          <h1 style="margin:0 0 14px;font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:42px;line-height:1.02;letter-spacing:-1px;">Tu <span style="color:var(--accent-red);">ciclo</span>,<br>sin adivinar</h1>
+          <p style="margin:0 auto;font-size:14.5px;line-height:1.55;color:var(--text-muted);max-width:270px;">Marca tu último período y calculamos tu ovulación y tu próxima menstruación con datos, no con suposiciones</p>
+        </div>
+        <div class="glass" style="padding:18px 20px;display:flex;flex-direction:column;gap:12px;">
+          <span style="font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-faint);font-weight:600;">Último período</span>
+          <div style="display:flex;align-items:center;justify-content:space-between;">
+            <div style="display:flex;align-items:center;gap:12px;">
+              <div class="clay-icon" style="width:38px;height:38px;border-radius:13px;color:var(--accent-red);">
+                <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="5" width="17" height="16" rx="3"></rect><path d="M8 3v4M16 3v4M3.5 10h17"></path></svg>
+              </div>
+              <input type="date" id="lastPeriodInput" class="lunara-date">
+            </div>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--text-faint)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"></path></svg>
+          </div>
+        </div>
+        <div class="glass" style="padding:18px 20px;display:flex;flex-direction:column;gap:14px;">
+          <div style="display:flex;align-items:center;justify-content:space-between;">
+            <span style="font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-faint);font-weight:600;">Duración del ciclo</span>
+            <span id="cycleLenLabel" style="font-family:'Bricolage Grotesque',sans-serif;font-size:15px;font-weight:700;color:var(--accent-red);">28 días</span>
+          </div>
+          <input type="range" id="cycleLenInput" class="lunara-slider" min="21" max="45" value="28" oninput="document.getElementById('cycleLenLabel').textContent = this.value + ' días'">
+          <span style="font-size:11.5px;color:var(--text-faint);">¿No lo sabes con exactitud? No importa, lo afinamos solos con tus próximos registros</span>
+        </div>
+        <div class="glass" style="padding:18px 20px;display:flex;flex-direction:column;gap:14px;">
+          <div style="display:flex;align-items:center;justify-content:space-between;">
+            <span style="font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-faint);font-weight:600;">Duración del período</span>
+            <span id="periodLenLabel" style="font-family:'Bricolage Grotesque',sans-serif;font-size:15px;font-weight:700;color:var(--accent-red);">5 días</span>
+          </div>
+          <input type="range" id="periodLenInput" class="lunara-slider" min="2" max="10" value="5" oninput="document.getElementById('periodLenLabel').textContent = this.value + ' días'">
+        </div>
+      </div>
+      <div style="position:relative;display:flex;flex-direction:column;gap:16px;">
+        <button class="btn-primary" onclick="saveOnboarding()">
+          Comenzar
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>
+        </button>
+        <div style="display:flex;align-items:center;justify-content:center;gap:7px;color:var(--text-faint);">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="10.5" width="14" height="9" rx="2.5"></rect><path d="M8 10.5V8a4 4 0 0 1 8 0v2.5"></path></svg>
+          <span style="font-size:11.5px;">Se cifra en tu propio dispositivo, nunca sale de aquí</span>
+        </div>
+      </div>
+    </div>
+   </div>
+  </section>
+
+  <!-- MAIN -->
+  <section class="screen" id="main">
+   <div class="scroll-area">
+    <div class="pad tall">
+      <div class="brand-row" style="display:flex;align-items:center;justify-content:space-between;">
+        <div class="brand"><svg width="18" height="18" viewBox="0 0 24 24" fill="var(--accent-red)"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>LUNARA</div>
+        <div class="clay-icon" style="width:40px;height:40px;border-radius:14px;color:var(--text-muted);cursor:pointer;" onclick="showScreen('settings')">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.5"></circle><path d="M4.5 20c1.5-4 4.5-6 7.5-6s6 2 7.5 6"></path></svg>
+        </div>
+      </div>
+      <div style="margin-top:20px;text-align:center;">
+        <span style="font-size:13.5px;color:var(--text-muted);">Hola, Valentina</span>
+        <div id="mainBadge" style="display:inline-flex;align-items:center;gap:7px;padding:5px 12px 5px 8px;border-radius:999px;background:var(--accent-blue-soft);margin:10px 0 12px;">
+          <span id="mainBadgeDot" class="badge-dot" style="width:6px;height:6px;border-radius:50%;background:var(--accent-blue);display:inline-block;"></span>
+          <span id="mainBadgeLabel" style="font-size:10px;font-weight:700;letter-spacing:1.1px;color:var(--accent-blue);text-transform:uppercase;">Ovulación estimada</span>
+        </div>
+        <h1 id="mainHeadline" style="margin:0 auto;max-width:290px;font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:27px;line-height:1.15;letter-spacing:-0.4px;">Hoy es tu pico de <span style="color:var(--accent-blue);">fertilidad</span></h1>
+      </div>
+      <div style="display:flex;justify-content:center;margin-top:20px;">
+        <div style="position:relative;width:216px;height:216px;">
+          <div id="mainRingGlow" style="position:absolute;inset:-26px;border-radius:50%;background:var(--accent-blue);opacity:0.22;filter:blur(40px);"></div>
+          <div style="position:absolute;inset:0;border-radius:50%;background:var(--surface-raised);box-shadow:var(--clay-shadow);"></div>
+          <svg width="216" height="216" viewBox="0 0 216 216" style="position:relative;transform:rotate(-90deg);">
+            <defs>
+              <linearGradient id="lunaraRed" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="var(--accent-red-light)"></stop><stop offset="100%" stop-color="var(--accent-red)"></stop></linearGradient>
+              <linearGradient id="lunaraGreen" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="var(--accent-green-light)"></stop><stop offset="100%" stop-color="var(--accent-green)"></stop></linearGradient>
+            </defs>
+            <circle cx="108" cy="108" r="94" fill="none" stroke="var(--surface)" stroke-width="14"></circle>
+            <circle id="ringPeriodArc" cx="108" cy="108" r="94" fill="none" stroke="url(#lunaraRed)" stroke-width="14" stroke-linecap="round" stroke-dasharray="0 105.5 485.1"></circle>
+            <circle id="ringFertileArc" cx="108" cy="108" r="94" fill="none" stroke="url(#lunaraGreen)" stroke-width="14" stroke-linecap="round" stroke-dasharray="168.7 126.6 295.3"></circle>
+            <circle cx="108" cy="108" r="94" fill="none" stroke="rgba(255,255,255,0.4)" stroke-width="5" stroke-linecap="round" stroke-dasharray="6 26 558.6"></circle>
+          </svg>
+          <div id="ringMarker" style="position:absolute;left:101px;top:196px;width:14px;height:14px;border-radius:50%;background:var(--accent-blue);border:3px solid var(--bg);box-shadow:0 0 0 4px var(--accent-blue-soft), 0 0 14px var(--accent-blue);"></div>
+          <div id="todayMarker" style="position:absolute;width:16px;height:16px;">
+            <span id="todayPulseRing" class="pulse-ring"></span>
+            <span class="pulse-dot"></span>
+          </div>
+          <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;">
+            <span id="mainCycleDay" style="font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:54px;line-height:1;letter-spacing:-1.6px;">14</span>
+            <span id="mainCycleTotal" style="font-size:12px;color:var(--text-muted);margin-top:6px;">de 28 días</span>
+          </div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:center;gap:16px;margin-top:14px;">
+        <div style="display:flex;align-items:center;gap:6px;"><span style="width:8px;height:8px;border-radius:50%;background:var(--accent-red);"></span><span style="font-size:10.5px;color:var(--text-faint);">Período</span></div>
+        <div style="display:flex;align-items:center;gap:6px;"><span style="width:8px;height:8px;border-radius:50%;background:var(--accent-green);"></span><span style="font-size:10.5px;color:var(--text-faint);">Fértil</span></div>
+        <div style="display:flex;align-items:center;gap:6px;"><span style="width:8px;height:8px;border-radius:50%;background:var(--accent-blue);"></span><span style="font-size:10.5px;color:var(--text-faint);">Ovulación</span></div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-top:20px;">
+        <div class="glass" style="padding:16px;display:flex;flex-direction:column;gap:10px;">
+          <div class="clay-icon" style="width:34px;height:34px;border-radius:11px;color:var(--accent-blue);"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4.5"></circle><path d="M12 2.5v3M12 18.5v3M21.5 12h-3M5.5 12h-3M18.4 5.6l-2 2M7.6 16.4l-2 2M18.4 18.4l-2-2M7.6 7.6l-2-2"></path></svg></div>
+          <span style="font-size:11px;color:var(--text-faint);letter-spacing:0.4px;text-transform:uppercase;font-weight:600;">Ovulación</span>
+          <span id="ovulationDateLabel" style="font-family:'Bricolage Grotesque',sans-serif;font-size:18px;font-weight:700;">Hoy</span>
+          <span id="ovulationSubLabel" style="font-size:11.5px;color:var(--text-muted);">Pico de fertilidad</span>
+        </div>
+        <div class="glass" style="padding:16px;display:flex;flex-direction:column;gap:10px;">
+          <div class="clay-icon" style="width:34px;height:34px;border-radius:11px;color:var(--accent-red);"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.5c3 4 6 7.6 6 11a6 6 0 1 1-12 0c0-3.4 3-7 6-11Z"></path></svg></div>
+          <span style="font-size:11px;color:var(--text-faint);letter-spacing:0.4px;text-transform:uppercase;font-weight:600;">Próx. período</span>
+          <span id="nextPeriodDateLabel" style="font-family:'Bricolage Grotesque',sans-serif;font-size:18px;font-weight:700;">10 sept</span>
+          <span id="nextPeriodSubLabel" style="font-size:11.5px;color:var(--text-muted);">En 15 días</span>
+        </div>
+      </div>
+      <button class="btn-glass" style="margin-top:14px;" onclick="markPeriodStart()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--accent-red)" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.5c3 4 6 7.6 6 11a6 6 0 1 1-12 0c0-3.4 3-7 6-11Z"></path></svg>
+        Marcar inicio de período
+      </button>
+    </div>
+   </div>
+    <div class="navbar-wrap">
+      <div class="navbar">
+        <div class="nav-icon active"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11.5 12 4l9 7.5"></path><path d="M5.5 10v9a1 1 0 0 0 1 1H9.5a1 1 0 0 0 1-1v-4a1 1 0 0 1 1-1h1a1 1 0 0 1 1 1v4a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1v-9"></path></svg></div>
+        <div class="nav-icon" onclick="showScreen('calendar')"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="5" width="17" height="16" rx="3"></rect><path d="M8 3v4M16 3v4M3.5 10h17"></path></svg></div>
+        <div class="nav-gap"></div>
+        <div class="nav-icon" onclick="showScreen('stats')"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10M12 20V4M20 20v-7"></path></svg></div>
+        <div class="nav-icon" onclick="showScreen('settings')"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.5"></circle><path d="M4.5 20c1.5-4 4.5-6 7.5-6s6 2 7.5 6"></path></svg></div>
+      </div>
+      <div class="fab filled" onclick="openSheet('symptoms')"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"></path></svg></div>
+    </div>
+    <div class="toast" id="mainToast">Período marcado hoy</div>
+  </section>
+
+  <!-- CALENDAR -->
+  <section class="screen" id="calendar">
+   <div class="scroll-area">
+    <div class="pad tall">
+      <div class="brand-row" style="display:flex;align-items:center;justify-content:space-between;">
+        <div class="brand"><svg width="18" height="18" viewBox="0 0 24 24" fill="var(--accent-red)"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>LUNARA</div>
+        <div class="clay-icon" style="width:40px;height:40px;border-radius:14px;color:var(--text-muted);cursor:pointer;" onclick="showScreen('settings')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.5"></circle><path d="M4.5 20c1.5-4 4.5-6 7.5-6s6 2 7.5 6"></path></svg></div>
+      </div>
+      <div style="margin-top:18px;text-align:center;"><span class="kicker">Seguimiento mensual</span><h1 class="title">Tu calendario</h1></div>
+      <div class="glass" style="margin-top:18px;padding:18px 18px 16px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+          <div class="clay-icon" style="width:32px;height:32px;border-radius:11px;color:var(--text-muted);cursor:pointer;" onclick="shiftCalendarMonth(-1)"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"></path></svg></div>
+          <span id="calendarMonthLabel" style="font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:16px;">Agosto 2026</span>
+          <div class="clay-icon" style="width:32px;height:32px;border-radius:11px;color:var(--text-muted);cursor:pointer;" onclick="shiftCalendarMonth(1)"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"></path></svg></div>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px;margin-bottom:6px;" id="weekdays"></div>
+        <div style="display:grid;grid-template-columns:repeat(7,minmax(0,1fr));grid-auto-rows:40px;gap:4px;" id="calendarGrid"></div>
+      </div>
+      <div style="display:flex;align-items:center;gap:16px;margin-top:16px;flex-wrap:wrap;">
+        <div style="display:flex;align-items:center;gap:7px;"><span style="width:11px;height:11px;border-radius:50%;background:var(--accent-red);display:inline-block;"></span><span style="font-size:11.5px;color:var(--text-muted);">Período</span></div>
+        <div style="display:flex;align-items:center;gap:7px;"><span style="width:11px;height:11px;border-radius:50%;background:var(--accent-green-soft);display:inline-block;"></span><span style="font-size:11.5px;color:var(--text-muted);">Ventana fértil</span></div>
+        <div style="display:flex;align-items:center;gap:7px;"><span style="width:11px;height:11px;border-radius:50%;border:2px solid var(--accent-blue);display:inline-block;box-sizing:border-box;"></span><span style="font-size:11.5px;color:var(--text-muted);">Ovulación est.</span></div>
+      </div>
+      <div class="glass" style="margin-top:16px;padding:18px 20px;display:flex;flex-direction:column;gap:8px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;"><span style="font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--text-faint);font-weight:600;">Ciclo actual</span><span id="calendarCycleLabel" style="font-family:'Bricolage Grotesque',sans-serif;font-size:16px;font-weight:700;">Día 14 de 28</span></div>
+        <div style="height:1px;background:var(--glass-border);margin:2px 0;"></div>
+        <div style="display:flex;align-items:center;gap:9px;color:var(--accent-blue);"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4.5"></circle><path d="M12 2.5v3M12 18.5v3M21.5 12h-3M5.5 12h-3M18.4 5.6l-2 2M7.6 16.4l-2 2M18.4 18.4l-2-2M7.6 7.6l-2-2"></path></svg><span id="calendarInsightLabel" style="font-size:12.5px;color:var(--text-muted);">Hoy es tu día estimado de ovulación</span></div>
+      </div>
+    </div>
+   </div>
+    <div class="navbar-wrap">
+      <div class="navbar">
+        <div class="nav-icon" onclick="showScreen('main')"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11.5 12 4l9 7.5"></path><path d="M5.5 10v9a1 1 0 0 0 1 1H9.5a1 1 0 0 0 1-1v-4a1 1 0 0 1 1-1h1a1 1 0 0 1 1 1v4a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1v-9"></path></svg></div>
+        <div class="nav-icon active"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="5" width="17" height="16" rx="3"></rect><path d="M8 3v4M16 3v4M3.5 10h17"></path></svg></div>
+        <div class="nav-gap"></div>
+        <div class="nav-icon" onclick="showScreen('stats')"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10M12 20V4M20 20v-7"></path></svg></div>
+        <div class="nav-icon" onclick="showScreen('settings')"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.5"></circle><path d="M4.5 20c1.5-4 4.5-6 7.5-6s6 2 7.5 6"></path></svg></div>
+      </div>
+      <div class="fab filled" onclick="openSheet('symptoms')"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"></path></svg></div>
+    </div>
+  </section>
+
+  <!-- STATS -->
+  <section class="screen" id="stats">
+   <div class="scroll-area">
+    <div class="pad tall">
+      <div class="brand-row" style="display:flex;align-items:center;justify-content:space-between;">
+        <div class="brand"><svg width="18" height="18" viewBox="0 0 24 24" fill="var(--accent-red)"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>LUNARA</div>
+        <div class="clay-icon" style="width:40px;height:40px;border-radius:14px;color:var(--text-muted);cursor:pointer;" onclick="showScreen('settings')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.5"></circle><path d="M4.5 20c1.5-4 4.5-6 7.5-6s6 2 7.5 6"></path></svg></div>
+      </div>
+      <div style="margin-top:18px;text-align:center;">
+        <span class="kicker">Tus patrones</span><h1 id="statsTitle" class="title">Tus ciclos</h1>
+        <p id="statsSubtitle" style="margin:6px 0 18px;font-size:13.5px;color:var(--text-muted);">Así se ha movido tu cuerpo</p>
+      </div>
+      <div class="glass" id="statsChartCard" style="padding:20px 18px 16px;">
+        <div style="display:flex;align-items:flex-end;justify-content:space-between;height:110px;" id="statsBars"></div>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-top:10px;" id="statsLabels"></div>
+      </div>
+      <p id="statsEmpty" style="display:none;margin:0;font-size:13px;line-height:1.5;color:var(--text-faint);text-align:center;padding:18px 6px;">Aún no hay suficientes ciclos registrados. Marca tu período un par de veces más y aquí empezarán a verse tus patrones.</p>
+      <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:14px;">
+        <div class="clay-icon" style="border-radius:20px;padding:14px 10px;flex-direction:column;gap:6px;text-align:center;height:auto;"><span id="statAvgCycle" style="font-family:'Bricolage Grotesque',sans-serif;font-size:20px;font-weight:800;color:var(--accent-red);">28</span><span style="font-size:9.5px;color:var(--text-faint);line-height:1.3;">días promedio de ciclo</span></div>
+        <div class="clay-icon" style="border-radius:20px;padding:14px 10px;flex-direction:column;gap:6px;text-align:center;height:auto;"><span id="statAvgPeriod" style="font-family:'Bricolage Grotesque',sans-serif;font-size:20px;font-weight:800;color:var(--accent-red);">5</span><span style="font-size:9.5px;color:var(--text-faint);line-height:1.3;">días promedio de período</span></div>
+        <div class="clay-icon" style="border-radius:20px;padding:14px 10px;flex-direction:column;gap:6px;text-align:center;height:auto;"><span id="statRegularity" style="font-family:'Bricolage Grotesque',sans-serif;font-size:20px;font-weight:800;color:var(--accent-green);">--</span><span style="font-size:9.5px;color:var(--text-faint);line-height:1.3;">regularidad</span></div>
+      </div>
+      <div class="glass" style="display:flex;align-items:center;gap:10px;margin-top:22px;padding:15px 18px;">
+        <div class="clay-icon" style="width:32px;height:32px;border-radius:11px;color:var(--accent-green);flex-shrink:0;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.5 10.9c.6.45 1 1.15 1 1.9V16h5v-.2c0-.75.4-1.45 1-1.9A6 6 0 0 0 12 3Z"></path></svg></div>
+        <span id="statsInsight" style="font-size:12.5px;line-height:1.45;color:var(--text-muted);">Registra tu período para empezar a ver información sobre tu ciclo</span>
+      </div>
+      <h2 style="margin:24px 0 12px;font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:16px;">Historial de ciclos</h2>
+      <div class="glass" style="overflow:hidden;" id="historyList"></div>
+    </div>
+   </div>
+    <div class="navbar-wrap">
+      <div class="navbar">
+        <div class="nav-icon" onclick="showScreen('main')"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11.5 12 4l9 7.5"></path><path d="M5.5 10v9a1 1 0 0 0 1 1H9.5a1 1 0 0 0 1-1v-4a1 1 0 0 1 1-1h1a1 1 0 0 1 1 1v4a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1v-9"></path></svg></div>
+        <div class="nav-icon" onclick="showScreen('calendar')"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="5" width="17" height="16" rx="3"></rect><path d="M8 3v4M16 3v4M3.5 10h17"></path></svg></div>
+        <div class="nav-gap"></div>
+        <div class="nav-icon active"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10M12 20V4M20 20v-7"></path></svg></div>
+        <div class="nav-icon" onclick="showScreen('settings')"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.5"></circle><path d="M4.5 20c1.5-4 4.5-6 7.5-6s6 2 7.5 6"></path></svg></div>
+      </div>
+      <div class="fab filled" onclick="openSheet('symptoms')"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"></path></svg></div>
+    </div>
+  </section>
+
+  <!-- SYMPTOMS — bottom sheet, drag to dismiss -->
+  <div class="sheet" id="symptoms">
+    <div class="sheet-scrim" onclick="closeSheet('symptoms')"></div>
+    <div class="sheet-panel">
+      <div class="sheet-handle"><span class="sheet-grabber"></span></div>
+      <div class="sheet-body">
+        <div style="padding:2px 24px 28px;">
+          <div style="text-align:center;"><span class="kicker">Registro diario</span><h1 class="title">¿Cómo te sientes?</h1></div>
+          <div style="margin-top:18px;background:var(--accent-blue-panel);border:1px solid var(--accent-blue-border);border-radius:22px;padding:17px 18px;display:flex;flex-direction:column;gap:10px;">
+            <div style="display:flex;align-items:center;gap:9px;">
+              <div style="width:28px;height:28px;border-radius:10px;background:var(--accent-blue-soft);display:flex;align-items:center;justify-content:center;color:var(--accent-blue);flex-shrink:0;"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l1.8 5.2L19 9l-5.2 1.8L12 16l-1.8-5.2L5 9l5.2-1.8L12 2Z"></path></svg></div>
+              <span style="font-size:11px;font-weight:700;letter-spacing:0.6px;text-transform:uppercase;color:var(--accent-blue);">Predicción de hoy</span>
+            </div>
+            <p id="predictionText" style="margin:0;font-size:13.5px;line-height:1.55;">Registra tus síntomas en un par de ciclos más y aquí verás qué es probable que sientas hoy</p>
+            <div id="predictionBadges" style="display:flex;gap:8px;margin-top:2px;"></div>
+          </div>
+          <h2 style="margin:24px 0 12px;font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:15px;">Selecciona lo que sientes</h2>
+          <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;" id="symptomGrid"></div>
+          <div class="glass" style="margin-top:18px;padding:18px;">
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;">
+              <div class="clay-icon" style="width:30px;height:30px;border-radius:10px;color:var(--accent-red);"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.5c3 4 6 7.6 6 11a6 6 0 1 1-12 0c0-3.4 3-7 6-11Z"></path></svg></div>
+              <span style="font-size:14px;font-weight:600;">Cólicos, ¿qué tan fuerte?</span>
+            </div>
+            <div class="severity">
+              <div class="severity-pill" onclick="selectSeverity(this)">Leve</div>
+              <div class="severity-pill active" onclick="selectSeverity(this)">Medio</div>
+              <div class="severity-pill" onclick="selectSeverity(this)">Fuerte</div>
+            </div>
+          </div>
+          <div class="glass" style="margin-top:14px;padding:18px;">
+            <span style="font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--text-faint);font-weight:600;">Notas</span>
+            <textarea id="symptomNotes" placeholder="Cuéntanos algo más sobre tu día" style="margin-top:10px;width:100%;min-height:56px;border:none;background:transparent;resize:none;font-family:'Manrope',sans-serif;font-size:13.5px;line-height:1.5;color:var(--text);outline:none;"></textarea>
+          </div>
+          <button class="btn-primary" style="margin-top:20px;" onclick="saveSymptoms()">
+            Guardar registro
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l4.5 4.5L19 7"></path></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="toast" id="symptomToast">Registro guardado</div>
+  </div>
+
+  <!-- SETTINGS -->
+  <section class="screen" id="settings">
+   <div class="scroll-area">
+    <div class="pad tall">
+      <div class="brand"><svg width="18" height="18" viewBox="0 0 24 24" fill="var(--accent-red)"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>LUNARA</div>
+      <div style="margin-top:18px;text-align:center;"><span class="kicker">Tu cuenta</span><h1 class="title">Configuración</h1></div>
+      <div class="glass" style="margin-top:20px;display:flex;align-items:center;gap:14px;padding:16px 18px;">
+        <div style="width:52px;height:52px;border-radius:16px;background:var(--accent-red);display:flex;align-items:center;justify-content:center;color:var(--accent-text);font-family:'Bricolage Grotesque',sans-serif;font-size:20px;font-weight:800;flex-shrink:0;">V</div>
+        <div style="flex:1;display:flex;flex-direction:column;gap:2px;"><span style="font-size:15.5px;font-weight:700;font-family:'Bricolage Grotesque',sans-serif;">Valentina</span><span id="settingsCycleSummary" style="font-size:12px;color:var(--text-faint);">Ciclo de 28 días · día 14</span></div>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--text-faint)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"></path></svg>
+      </div>
+      <span style="display:block;margin:24px 0 10px;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text-faint);">Preferencias</span>
+      <div class="glass" style="overflow:hidden;">
+        <div class="row" style="cursor:pointer;" onclick="toggleTheme()">
+          <div class="clay-icon" style="width:30px;height:30px;border-radius:10px;color:var(--accent-red);flex-shrink:0;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M12 3a9 9 0 0 0 0 18 2 2 0 0 0 0-4 2 2 0 0 1 0-4h4a3 3 0 0 0 3-3 9 9 0 0 0-7-7Z"></path></svg></div>
+          <span style="flex:1;font-size:13.5px;font-weight:600;">Tema</span>
+          <span style="font-size:12.5px;color:var(--text-faint);" id="themeValue">Oscuro</span>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--text-faint)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"></path></svg>
+        </div>
+        <div class="row" style="cursor:pointer;" onclick="showScreen('onboarding')">
+          <div class="clay-icon" style="width:30px;height:30px;border-radius:10px;color:var(--accent-red);flex-shrink:0;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="5" width="17" height="16" rx="3"></rect><path d="M8 3v4M16 3v4M3.5 10h17"></path></svg></div>
+          <span style="flex:1;font-size:13.5px;font-weight:600;">Duración del ciclo y período</span>
+          <span id="settingsCycleLenValue" style="font-size:12.5px;color:var(--text-faint);">28 días</span>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--text-faint)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"></path></svg>
+        </div>
+        <div class="row">
+          <div class="clay-icon" style="width:30px;height:30px;border-radius:10px;color:var(--accent-red);flex-shrink:0;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9a6 6 0 1 1 12 0c0 4 1.5 5.5 1.5 5.5h-15S6 13 6 9Z"></path><path d="M10 19a2 2 0 0 0 4 0"></path></svg></div>
+          <span style="flex:1;font-size:13.5px;font-weight:600;">Notificaciones</span>
+          <div class="switch" onclick="this.classList.toggle('off')"><div class="knob"></div></div>
+        </div>
+      </div>
+      <span style="display:block;margin:24px 0 10px;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text-faint);">Compartir</span>
+      <div style="background:var(--accent-blue-panel);border:1px solid var(--accent-blue-border);border-radius:20px;padding:18px;display:flex;flex-direction:column;gap:12px;">
+        <div style="display:flex;align-items:center;gap:12px;">
+          <div style="width:34px;height:34px;border-radius:11px;background:var(--accent-blue-soft);display:flex;align-items:center;justify-content:center;color:var(--accent-blue);flex-shrink:0;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="8" r="3"></circle><circle cx="17" cy="9" r="2.5"></circle><path d="M2.5 20c1-3.5 3.2-5.5 5.5-5.5s4.5 2 5.5 5.5"></path><path d="M14.5 15c1.8.3 3.3 1.8 4 4.5"></path></svg></div>
+          <div style="flex:1;"><span style="display:block;font-size:14px;font-weight:700;">Compartir con tu pareja</span><span style="display:block;font-size:12px;color:var(--text-muted);margin-top:2px;">Invita a alguien para que también pueda registrar por ti</span></div>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;">
+          <div style="flex:1;padding:10px 14px;border-radius:12px;background:var(--surface-raised);box-shadow:var(--clay-shadow-inset);font-family:'Bricolage Grotesque',sans-serif;font-size:13px;font-weight:700;letter-spacing:1px;color:var(--text-muted);">LUN-7F2K</div>
+          <button style="border:none;cursor:pointer;padding:10px 18px;border-radius:12px;background:var(--accent-blue);color:var(--accent-text);font-family:'Bricolage Grotesque',sans-serif;font-size:13px;font-weight:700;" onclick="openSheet('login')">Invitar</button>
+        </div>
+      </div>
+      <span style="display:block;margin:24px 0 10px;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text-faint);">Datos y privacidad</span>
+      <div class="glass" style="overflow:hidden;">
+        <div class="row"><div class="clay-icon" style="width:30px;height:30px;border-radius:10px;color:var(--text-muted);flex-shrink:0;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M8 11l4 4 4-4"></path><path d="M4 19h16"></path></svg></div><span style="flex:1;font-size:13.5px;font-weight:600;">Exportar mis datos</span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--text-faint)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"></path></svg></div>
+        <div class="row"><div class="clay-icon" style="width:30px;height:30px;border-radius:10px;color:var(--text-muted);flex-shrink:0;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="10.5" width="14" height="9" rx="2.5"></rect><path d="M8 10.5V8a4 4 0 0 1 8 0v2.5"></path></svg></div><span style="flex:1;font-size:13.5px;font-weight:600;">Privacidad y cifrado</span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--text-faint)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"></path></svg></div>
+      </div>
+      <div class="clay-icon" style="margin-top:24px;border-radius:22px;padding:20px;flex-direction:column;align-items:stretch;height:auto;">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--accent-red)" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8l4 3 5-6 5 6 4-3-1.5 10h-15L3 8Z"></path></svg><span style="font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:15px;letter-spacing:-0.2px;">Lunara Plus</span></div>
+        <p style="position:relative;margin:0 0 14px;font-size:12.5px;line-height:1.5;color:var(--text-muted);max-width:260px;">Predicciones avanzadas, insights ilimitados y sincronización con tu pareja en un solo lugar</p>
+        <button style="position:relative;border:none;cursor:pointer;padding:11px 20px;border-radius:14px;background:var(--accent-red);color:var(--accent-text);font-family:'Bricolage Grotesque',sans-serif;font-size:13px;font-weight:700;" onclick="openSheet('login')">Probar Premium</button>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;justify-content:center;margin-top:26px;color:var(--text-faint);"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><path d="M16 17l5-5-5-5"></path><path d="M21 12H9"></path></svg><span style="font-size:12.5px;font-weight:600;">Cerrar sesión</span></div>
+    </div>
+   </div>
+    <div class="navbar-wrap">
+      <div class="navbar">
+        <div class="nav-icon" onclick="showScreen('main')"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11.5 12 4l9 7.5"></path><path d="M5.5 10v9a1 1 0 0 0 1 1H9.5a1 1 0 0 0 1-1v-4a1 1 0 0 1 1-1h1a1 1 0 0 1 1 1v4a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1v-9"></path></svg></div>
+        <div class="nav-icon" onclick="showScreen('calendar')"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="5" width="17" height="16" rx="3"></rect><path d="M8 3v4M16 3v4M3.5 10h17"></path></svg></div>
+        <div class="nav-gap"></div>
+        <div class="nav-icon" onclick="showScreen('stats')"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10M12 20V4M20 20v-7"></path></svg></div>
+        <div class="nav-icon active"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.5"></circle><path d="M4.5 20c1.5-4 4.5-6 7.5-6s6 2 7.5 6"></path></svg></div>
+      </div>
+      <div class="fab filled" onclick="openSheet('symptoms')"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"></path></svg></div>
+    </div>
+  </section>
+
+  <!-- LOGIN -->
+  <!-- LOGIN — bottom sheet, drag to dismiss -->
+  <div class="sheet" id="login">
+    <div class="sheet-scrim" onclick="closeSheet('login')"></div>
+    <div class="sheet-panel">
+      <div class="sheet-handle"><span class="sheet-grabber"></span></div>
+      <div class="sheet-body">
+        <div style="padding:2px 24px 28px;display:flex;flex-direction:column;">
+          <div style="display:flex;flex-direction:column;align-items:center;text-align:center;gap:18px;padding:8px 0 6px;">
+            <div class="clay-icon" style="width:64px;height:64px;border-radius:20px;"><svg width="30" height="30" viewBox="0 0 24 24" fill="var(--accent-red)"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg></div>
+            <div>
+              <span class="kicker">Cuenta Lunara</span>
+              <h1 style="margin:8px 0 10px;font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:27px;letter-spacing:-0.4px;">Conecta tu cuenta</h1>
+              <p style="margin:0 auto;font-size:13.5px;line-height:1.55;color:var(--text-muted);max-width:260px;">Solo la necesitas para sincronizar con tu pareja o activar Lunara Plus en otro dispositivo</p>
+            </div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:12px;margin-top:8px;">
+            <button class="btn-clay" onclick="closeSheet('login')">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor"><path d="M16.7 12.7c0-2.2 1.8-3.3 1.9-3.3-1-1.5-2.6-1.7-3.2-1.7-1.4-.1-2.6.8-3.3.8-.7 0-1.8-.8-2.9-.8-1.5 0-2.9.9-3.6 2.2-1.6 2.7-.4 6.7 1.1 8.9.7 1.1 1.6 2.3 2.7 2.3 1.1 0 1.5-.7 2.8-.7s1.7.7 2.9.7c1.2 0 2-1.1 2.7-2.2.6-.9.9-1.7 1.1-2.2-2.9-1.1-2.2-3.9-2.2-4z"></path><path d="M14.6 6c.6-.7 1-1.7.9-2.6-.9 0-1.9.6-2.5 1.3-.5.6-1 1.6-.9 2.5 1 .1 1.9-.5 2.5-1.2z"></path></svg>
+              Continuar con Apple
+            </button>
+            <button class="btn-glass" onclick="closeSheet('login')">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.5 12a8.5 8.5 0 1 1-2.6-6.1"></path><path d="M12.2 12h8"></path></svg>
+              Continuar con Google
+            </button>
+            <div style="display:flex;align-items:center;gap:12px;margin:2px 0;"><div style="flex:1;height:1px;background:var(--glass-border);"></div><span style="font-size:11px;color:var(--text-faint);">o</span><div style="flex:1;height:1px;background:var(--glass-border);"></div></div>
+            <div class="glass" style="padding:15px 16px;display:flex;align-items:center;gap:10px;"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="var(--text-faint)" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="3"></rect><path d="M3.5 7l8.5 6 8.5-6"></path></svg><span style="font-size:14px;color:var(--text-faint);">tu@correo.com</span></div>
+            <button class="btn-primary" onclick="closeSheet('login')">
+              Continuar con correo
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>
+            </button>
+            <div style="display:flex;align-items:center;justify-content:center;gap:7px;color:var(--text-faint);margin-top:6px;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="10.5" width="14" height="9" rx="2.5"></rect><path d="M8 10.5V8a4 4 0 0 1 8 0v2.5"></path></svg><span style="font-size:11.5px;">Tus datos nunca se comparten sin tu permiso</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+<p class="hint">Toca la pantalla de apertura para saltarla, y usa la barra inferior, el botón "+" y los botones para navegar — cada pantalla es real HTML/CSS/JS.</p>
+
+<script>
+  var splashTimer = setTimeout(function(){ showScreen('onboarding'); }, 1500);
+
+  function showScreen(id) {
+    document.querySelectorAll('.screen').forEach(function(s){ s.classList.remove('active'); });
+    document.getElementById(id).classList.add('active');
+  }
+  function skipSplash() {
+    clearTimeout(splashTimer);
+    showScreen('onboarding');
+  }
+
+  /* ============================================================
+     Spring engine — Apple's damping/response model, hand-rolled.
+     No external animation library can be loaded here (artifact CSP
+     blocks third-party scripts), so this is a small critically/
+     under-damped spring integrator driven by requestAnimationFrame.
+     Always animates from the live current value, so it can be
+     grabbed and redirected mid-flight — never a fixed-duration tween.
+     ============================================================ */
+  var REDUCED_MOTION = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function Spring(initial) {
+    var value = initial, velocity = 0, target = initial;
+    var damping = 1, response = 0.35;
+    var raf = null, lastTime = null, onUpdate = null, onSettle = null;
+
+    function tick(now) {
+      if (lastTime == null) lastTime = now;
+      var dt = Math.min((now - lastTime) / 1000, 0.032);
+      lastTime = now;
+      var omega = 2 * Math.PI / Math.max(response, 0.01);
+      var c = 2 * damping * omega;
+      var k = omega * omega;
+      var accel = -k * (value - target) - c * velocity;
+      velocity += accel * dt;
+      value += velocity * dt;
+      if (onUpdate) onUpdate(value, velocity);
+      if (Math.abs(value - target) < 0.4 && Math.abs(velocity) < 4) {
+        value = target; velocity = 0;
+        if (onUpdate) onUpdate(value, velocity);
+        raf = null; lastTime = null;
+        if (onSettle) onSettle();
+        return;
+      }
+      raf = requestAnimationFrame(tick);
+    }
+
+    return {
+      value: function(){ return value; },
+      velocity: function(){ return velocity; },
+      /* Jump instantly — used while a finger is dragging (1:1 tracking, no spring lag) */
+      set: function(v){
+        value = v;
+        if (raf) { cancelAnimationFrame(raf); raf = null; lastTime = null; }
+      },
+      /* Animate to a new target, carrying whatever velocity is passed in (release velocity handoff) */
+      to: function(newTarget, opts) {
+        opts = opts || {};
+        target = newTarget;
+        damping = opts.damping != null ? opts.damping : 1;
+        response = opts.response != null ? opts.response : 0.35;
+        if (opts.velocity != null) velocity = opts.velocity;
+        onUpdate = opts.onUpdate || onUpdate;
+        onSettle = opts.onSettle || null;
+        if (REDUCED_MOTION) {
+          value = target; velocity = 0;
+          if (onUpdate) onUpdate(value, velocity);
+          if (onSettle) onSettle();
+          return;
+        }
+        lastTime = null;
+        if (!raf) raf = requestAnimationFrame(tick);
+      },
+      stop: function(){ if (raf) cancelAnimationFrame(raf); raf = null; lastTime = null; }
+    };
+  }
+
+  /* Momentum projection — where does a flick's velocity land it at rest? (§6) */
+  function projectMomentum(velocityPxPerSec, decay) {
+    decay = decay || 0.998;
+    return (velocityPxPerSec / 1000) * decay / (1 - decay);
+  }
+  /* Rubber-band resistance past a boundary — progressive, never a hard stop (§9) */
+  function rubberband(overshoot, dimension, constant) {
+    constant = constant || 0.55;
+    return (overshoot * dimension * constant) / (dimension + constant * Math.abs(overshoot));
+  }
+
+  /* Ghost-click guard: a drag that ends over a newly-exposed element (a nav icon behind a
+     sheet that just moved out of the way) can still fire a native `click` there even though
+     pointer capture routed the drag itself correctly — click isn't part of the captured stream. */
+  function suppressNextClick() {
+    var swallow = function(e){ e.stopPropagation(); e.preventDefault(); window.removeEventListener('click', swallow, true); };
+    window.addEventListener('click', swallow, true);
+    setTimeout(function(){ window.removeEventListener('click', swallow, true); }, 400);
+  }
+
+  /* ---------- Bottom sheets: Síntomas, Cuenta — real 1:1 drag, not a scripted animation ---------- */
+  var sheets = {};
+
+  function initSheet(id) {
+    var root = document.getElementById(id);
+    var panel = root.querySelector('.sheet-panel');
+    var scrim = root.querySelector('.sheet-scrim');
+    var handle = root.querySelector('.sheet-handle');
+    var spring = Spring(0);
+    var state = { root: root, panel: panel, scrim: scrim, dragging: false, dragStartY: 0, dragBaseY: 0, samples: [], height: 0 };
+    sheets[id] = state;
+
+    function render(y) {
+      var h = state.height || panel.offsetHeight || 1;
+      var progress = Math.max(0, Math.min(1, 1 - y / h));
+      panel.style.transform = 'translateY(' + y + 'px)';
+      scrim.style.opacity = progress;
+      var interactive = progress > 0.02;
+      if (state.interactive !== interactive) {
+        state.interactive = interactive;
+        scrim.style.pointerEvents = interactive ? 'auto' : 'none';
+        root.style.pointerEvents = interactive ? 'auto' : 'none';
+      }
+    }
+    state.render = render;
+    state.spring = spring;
+
+    handle.addEventListener('pointerdown', function(e){
+      state.height = panel.offsetHeight;
+      handle.setPointerCapture(e.pointerId);
+      state.dragging = true;
+      state.dragStartY = e.clientY;
+      state.dragBaseY = spring.value(); // presentation value — supports grabbing mid-spring
+      state.samples = [{ t: performance.now(), y: state.dragBaseY }];
+      spring.stop();
+    });
+    handle.addEventListener('pointermove', function(e){
+      if (!state.dragging) return;
+      var delta = e.clientY - state.dragStartY;
+      var raw = state.dragBaseY + delta;
+      var y = raw < 0 ? -rubberband(-raw, state.height || 400, 0.55) : raw;
+      spring.set(y);
+      render(y);
+      state.samples.push({ t: performance.now(), y: y });
+      if (state.samples.length > 6) state.samples.shift();
+    });
+    function endDrag(){
+      if (!state.dragging) return;
+      state.dragging = false;
+      var h = state.height || panel.offsetHeight || 400;
+      var last = state.samples[state.samples.length - 1];
+      var first = state.samples[0];
+      var dt = Math.max((last.t - first.t) / 1000, 0.001);
+      var velocityPxPerSec = (last.y - first.y) / dt;
+      /* A real drag can end with the pointer over whatever the sheet uncovered underneath
+         (e.g. a nav icon) — suppress the ghost click that would otherwise fire there. */
+      if (Math.abs(last.y - first.y) > 6) suppressNextClick();
+      var current = spring.value();
+      var projected = current + projectMomentum(velocityPxPerSec);
+      var shouldDismiss = projected > h * 0.38 || velocityPxPerSec > 500;
+      if (shouldDismiss) dismissSheet(id, velocityPxPerSec);
+      else presentSheet(id, velocityPxPerSec);
+    }
+    handle.addEventListener('pointerup', endDrag);
+    handle.addEventListener('pointercancel', endDrag);
+    scrim.addEventListener('click', function(){ closeSheet(id); });
+
+    var closedY = panel.offsetHeight || 600;
+    state.height = closedY;
+    spring.set(closedY); // start fully off-screen, in sync with what's rendered — never an arbitrary sentinel
+    render(closedY);
+  }
+
+  function presentSheet(id, initialVelocity) {
+    var s = sheets[id];
+    s.height = s.panel.offsetHeight;
+    s.spring.to(0, {
+      damping: 0.86, response: 0.32,
+      velocity: initialVelocity || 0,
+      onUpdate: function(v){ s.render(v); }
+    });
+  }
+  function dismissSheet(id, initialVelocity) {
+    var s = sheets[id];
+    var h = s.height || s.panel.offsetHeight || 600;
+    s.spring.to(h, {
+      damping: 1, response: 0.3,
+      velocity: initialVelocity || 0,
+      onUpdate: function(v){ s.render(v); }
+    });
+  }
+  function openSheet(id) {
+    var s = sheets[id];
+    if (!s) return;
+    s.height = s.panel.offsetHeight;
+    presentSheet(id, 0);
+  }
+  function closeSheet(id) {
+    dismissSheet(id, 0);
+  }
+  function effectiveTheme() {
+    var attr = document.documentElement.getAttribute('data-theme');
+    if (attr) return attr;
+    return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  }
+  function toggleTheme() {
+    var next = effectiveTheme() === 'light' ? 'dark' : 'light';
+    document.documentElement.setAttribute('data-theme', next);
+    document.getElementById('themeValue').textContent = next === 'dark' ? 'Oscuro' : 'Claro';
+  }
+  document.getElementById('themeValue').textContent = effectiveTheme() === 'dark' ? 'Oscuro' : 'Claro';
+  function selectSeverity(el) {
+    el.parentElement.querySelectorAll('.severity-pill').forEach(function(p){ p.classList.remove('active'); });
+    el.classList.add('active');
+  }
+  function toggleChip(el) {
+    el.classList.toggle('selected');
+  }
+  function saveSymptoms() {
+    var selected = Array.prototype.map.call(document.querySelectorAll('#symptomGrid .chip.selected span'), function(s){ return s.textContent; });
+    var severityEl = document.querySelector('.severity-pill.active');
+    var entry = {
+      date: new Date().toISOString().slice(0, 10),
+      symptoms: selected,
+      severity: severityEl ? severityEl.textContent : null,
+      notes: document.getElementById('symptomNotes').value
+    };
+    var log = loadSymptomLog();
+    log = log.filter(function(e){ return e.date !== entry.date; });
+    log.push(entry);
+    saveSymptomLog(log);
+    renderPrediction();
+    var toast = document.getElementById('symptomToast');
+    toast.classList.add('show');
+    setTimeout(function(){ toast.classList.remove('show'); closeSheet('symptoms'); }, 900);
+  }
+
+  var icons = {
+    cramps: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.5c3 4 6 7.6 6 11a6 6 0 1 1-12 0c0-3.4 3-7 6-11Z"></path></svg>',
+    headache: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="7.5"></circle><path d="M12.5 8l-2.5 4.5h3.5L11 17"></path></svg>',
+    bloating: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v3"></path><circle cx="12" cy="13.5" r="7.5"></circle><path d="M8.5 13.5c1.2-1.4 2.3-1.4 3.5 0s2.3 1.4 3.5 0"></path></svg>',
+    fatigue: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h5l-5 5.5h5"></path><path d="M13 5h6l-5.5 6H19"></path></svg>',
+    mood: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="7.5"></circle><path d="M9 10h.01M15 10h.01"></path><path d="M8.5 15.5c1-1 2-1 3.5 0s2.5 1 3.5 0"></path></svg>',
+    acne: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="4" width="12" height="16" rx="6"></rect><circle cx="10" cy="10.5" r="0.9" fill="currentColor" stroke="none"></circle><circle cx="14.3" cy="13" r="0.9" fill="currentColor" stroke="none"></circle><circle cx="9.5" cy="15.5" r="0.9" fill="currentColor" stroke="none"></circle></svg>',
+    cravings: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3v7a1.8 1.8 0 0 0 1.8 1.8V21M6.3 3v4.5M7.7 3v4.5"></path><path d="M16.8 3c-1.4 0-2.3 1.7-2.3 4.2s.9 4.2 2.3 4.2V21"></path></svg>',
+    sensitivity: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 12.5V6.8a1.4 1.4 0 0 1 2.8 0v5"></path><path d="M11.3 11.8V5.8a1.4 1.4 0 0 1 2.8 0v6.4"></path><path d="M14.1 12.2V7.6a1.4 1.4 0 0 1 2.8 0v6.9c0 3.6-1.9 6-5.4 6h-.8c-2.7 0-3.7-.9-5-3.2l-1.2-2.2c-.5-1 .3-1.9 1.2-1.5l2.2 1.1"></path></svg>'
+  };
+  var symptomsData = [
+    { label: 'Cólicos', icon: 'cramps', selected: true },
+    { label: 'Dolor de cabeza', icon: 'headache', selected: false },
+    { label: 'Hinchazón', icon: 'bloating', selected: false },
+    { label: 'Fatiga', icon: 'fatigue', selected: true },
+    { label: 'Cambios de ánimo', icon: 'mood', selected: true },
+    { label: 'Acné', icon: 'acne', selected: false },
+    { label: 'Antojos', icon: 'cravings', selected: false },
+    { label: 'Sensibilidad', icon: 'sensitivity', selected: false }
+  ];
+  var grid = document.getElementById('symptomGrid');
+  symptomsData.forEach(function(s){
+    var el = document.createElement('div');
+    el.className = 'chip' + (s.selected ? ' selected' : '');
+    el.onclick = function(){ toggleChip(el); };
+    el.innerHTML = icons[s.icon] + '<span>' + s.label + '</span>';
+    grid.appendChild(el);
+  });
+
+  var weekdaysEl = document.getElementById('weekdays');
+  ['L','M','X','J','V','S','D'].forEach(function(d){
+    var s = document.createElement('span');
+    s.style.cssText = 'text-align:center;font-size:10.5px;font-weight:700;letter-spacing:0.5px;color:var(--text-faint);padding:4px 0;';
+    s.textContent = d;
+    weekdaysEl.appendChild(s);
+  });
+
+  /* ---------- Real cycle-prediction engine ---------- */
+  var DAY = 86400000;
+  var MONTHS_ES = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+  var MONTHS_SHORT_ES = ['ene','feb','mar','abr','may','jun','jul','ago','sept','oct','nov','dic'];
+
+  function midnight(d) { var x = new Date(d); x.setHours(0,0,0,0); return x; }
+  function addDays(d, n) { return new Date(d.getTime() + n * DAY); }
+  function dateKey(d) { return d.getFullYear() + '-' + d.getMonth() + '-' + d.getDate(); }
+  function formatEs(d) { return d.getDate() + ' ' + MONTHS_SHORT_ES[d.getMonth()]; }
+
+  /* Cycle length must never fall below 21 — everything downstream (the ring's fertile-window
+     math, the calendar's date offsets) assumes ovulation (len-14) and fertile-start (len-19)
+     stay non-negative, which only holds for len >= 21. 21–45 is also the clinically recognized
+     "typical" range; outside it we flag it instead of quietly pretending it's normal. */
+  var CYCLE_LEN_MIN = 21, CYCLE_LEN_MAX = 45;
+
+  /* ============================================================
+     At-rest encryption (Web Crypto's SubtleCrypto — native, no library, works offline).
+     Every write to localStorage for cycle/period/symptom data goes through here first.
+     Honest about what this does and doesn't protect: the AES-GCM key lives on the same
+     device as the ciphertext (there's no server or passphrase in this client-only
+     prototype to hold it instead), so this does NOT defend against an attacker who can
+     run JavaScript on this exact page. What it DOES stop: a browser extension or backup
+     tool that scrapes localStorage values directly without executing the page's JS, or
+     anyone glancing at raw values in devtools/a device backup — they see ciphertext, not
+     "período: 13 de agosto". Real end-to-end protection needs a server-held or
+     passphrase-derived key, which is the natural next step once this has a backend.
+     ============================================================ */
+  var KEY_STORAGE = 'lunaraDeviceKey';
+  var deviceKeyPromise = null;
+
+  function getDeviceKey() {
+    if (deviceKeyPromise) return deviceKeyPromise;
+    deviceKeyPromise = (async function(){
+      var stored = localStorage.getItem(KEY_STORAGE);
+      if (stored) {
+        try {
+          var raw = Uint8Array.from(atob(stored), function(c){ return c.charCodeAt(0); });
+          return await crypto.subtle.importKey('raw', raw, 'AES-GCM', true, ['encrypt', 'decrypt']);
+        } catch (e) { /* fall through and mint a fresh key */ }
+      }
+      var key = await crypto.subtle.generateKey({ name: 'AES-GCM', length: 256 }, true, ['encrypt', 'decrypt']);
+      var exported = await crypto.subtle.exportKey('raw', key);
+      localStorage.setItem(KEY_STORAGE, btoa(String.fromCharCode.apply(null, new Uint8Array(exported))));
+      return key;
+    })();
+    return deviceKeyPromise;
+  }
+
+  async function secureSet(name, value) {
+    var key = await getDeviceKey();
+    var iv = crypto.getRandomValues(new Uint8Array(12));
+    var encoded = new TextEncoder().encode(JSON.stringify(value));
+    var cipher = await crypto.subtle.encrypt({ name: 'AES-GCM', iv: iv }, key, encoded);
+    localStorage.setItem(name, JSON.stringify({ iv: Array.from(iv), data: Array.from(new Uint8Array(cipher)) }));
+  }
+
+  async function secureGet(name, fallback) {
+    var raw = localStorage.getItem(name);
+    if (!raw) return fallback;
+    try {
+      var payload = JSON.parse(raw);
+      if (!payload || !payload.iv || !payload.data) return fallback; // legacy plaintext or corrupt — treat as absent, never crash on it
+      var key = await getDeviceKey();
+      var plainBuf = await crypto.subtle.decrypt({ name: 'AES-GCM', iv: new Uint8Array(payload.iv) }, key, new Uint8Array(payload.data));
+      return JSON.parse(new TextDecoder().decode(plainBuf));
+    } catch (e) { return fallback; }
+  }
+
+  /* Validated defaults + bounds-checking for a cycle-state object, wherever it came from. */
+  function sanitizeCycleState(s) {
+    var fallback = { lastPeriod: midnight(addDays(new Date(), -13)), cycleLength: 28, periodLength: 5 };
+    if (!s) return fallback;
+    var lastPeriod = midnight(new Date(s.lastPeriod));
+    var today = midnight(new Date());
+    if (isNaN(lastPeriod.getTime()) || lastPeriod > today) lastPeriod = fallback.lastPeriod;
+    var cycleLength = Math.min(CYCLE_LEN_MAX, Math.max(CYCLE_LEN_MIN, parseInt(s.cycleLength, 10) || fallback.cycleLength));
+    var periodLength = Math.max(1, parseInt(s.periodLength, 10) || fallback.periodLength);
+    return { lastPeriod: lastPeriod, cycleLength: cycleLength, periodLength: periodLength };
+  }
+
+  /* `cycleState` is the in-memory source of truth for the whole session — every render
+     function reads it synchronously. The encrypted copy on disk is refreshed in the
+     background (fire-and-forget) on every save; only the one-time startup load is async
+     (see bootstrapSecureState at the bottom of this script). */
+  var cycleState = sanitizeCycleState(null);
+
+  function saveCycleState(s) {
+    secureSet('lunaraCycle', { lastPeriod: s.lastPeriod.toISOString(), cycleLength: s.cycleLength, periodLength: s.periodLength });
+  }
+
+  /* Same in-memory-cache-plus-background-persist pattern for period history and the symptom log. */
+  var periodHistoryCache = [];
+  var symptomLogCache = [];
+
+  function loadPeriodHistory() {
+    return periodHistoryCache.slice();
+  }
+  function savePeriodHistory(hist) {
+    periodHistoryCache = hist.slice();
+    secureSet('lunaraPeriodHistory', hist.map(function(d){ return d.toISOString(); }));
+  }
+  function loadSymptomLog() {
+    return symptomLogCache.slice();
+  }
+  function saveSymptomLog(log) {
+    symptomLogCache = log.slice();
+    secureSet('lunaraSymptomLog', log);
+  }
+
+  function markPeriodStart() {
+    var today = midnight(new Date());
+    var history = loadPeriodHistory().sort(function(a, b){ return a - b; }); // defensive: never trust stored order
+    var last = history[history.length - 1];
+
+    if (last && last.getTime() === today.getTime()) {
+      // Already marked today — don't push a duplicate (a same-day gap of 0 would corrupt the average)
+      var toastDup = document.getElementById('mainToast');
+      toastDup.textContent = 'Ya habías marcado tu período hoy';
+      toastDup.classList.add('show');
+      setTimeout(function(){ toastDup.classList.remove('show'); }, 1800);
+      return;
+    }
+
+    history.push(today);
+    if (history.length > 6) history = history.slice(history.length - 6);
+    savePeriodHistory(history);
+
+    cycleState.lastPeriod = today;
+    var autoAdjusted = false, flaggedGap = null;
+    if (history.length >= 2) {
+      var gaps = [];
+      for (var i = 1; i < history.length; i++) gaps.push(Math.round((history[i] - history[i - 1]) / DAY));
+      var latestGap = gaps[gaps.length - 1];
+      var recentGaps = gaps.slice(-3);
+      var avg = Math.round(recentGaps.reduce(function(a, b){ return a + b; }, 0) / recentGaps.length);
+      if (avg >= CYCLE_LEN_MIN && avg <= CYCLE_LEN_MAX) {
+        cycleState.cycleLength = avg;
+        autoAdjusted = true;
+      } else if (latestGap < CYCLE_LEN_MIN || latestGap > CYCLE_LEN_MAX) {
+        // Don't silently ignore an implausible gap — flag it instead of pretending nothing happened
+        flaggedGap = latestGap;
+      }
+    }
+    saveCycleState(cycleState);
+    renderMain();
+    renderCalendar();
+    renderStats();
+    renderPrediction();
+    var toast = document.getElementById('mainToast');
+    if (autoAdjusted) {
+      toast.textContent = 'Período marcado — ciclo ajustado a ' + cycleState.cycleLength + ' días';
+    } else if (flaggedGap != null) {
+      toast.textContent = 'Período marcado — este ciclo duró ' + flaggedGap + ' días, fuera de lo habitual';
+    } else {
+      toast.textContent = 'Período marcado hoy';
+    }
+    toast.classList.add('show');
+    setTimeout(function(){ toast.classList.remove('show'); }, 2600);
+  }
+
+  function saveOnboarding() {
+    var dateVal = document.getElementById('lastPeriodInput').value;
+    var picked = dateVal ? midnight(new Date(dateVal + 'T00:00:00')) : cycleState.lastPeriod;
+    var today = midnight(new Date());
+    if (picked > today) picked = today; // defensive — never trust a future "last period" date, even if the date picker's max was bypassed
+    var lenIn = parseInt(document.getElementById('cycleLenInput').value, 10);
+    var periodIn = parseInt(document.getElementById('periodLenInput').value, 10);
+    cycleState = {
+      lastPeriod: picked,
+      cycleLength: Math.min(CYCLE_LEN_MAX, Math.max(CYCLE_LEN_MIN, isNaN(lenIn) ? 28 : lenIn)),
+      periodLength: Math.max(1, isNaN(periodIn) ? 5 : periodIn)
+    };
+    saveCycleState(cycleState);
+    if (loadPeriodHistory().length === 0) savePeriodHistory([picked]);
+    renderMain();
+    renderCalendar();
+    showScreen('main');
+  }
+
+  /* cycle info for the cycle that contains `ref` (defaults to today) */
+  function cycleInfoFor(ref) {
+    var today = midnight(ref || new Date());
+    var start = midnight(cycleState.lastPeriod);
+    var len = cycleState.cycleLength;
+    var diff = Math.round((today - start) / DAY);
+    var cyclesElapsed = Math.floor(diff / len);
+    var currentStart = addDays(start, cyclesElapsed * len);
+    var cycleDay = Math.round((today - currentStart) / DAY) + 1;
+    var nextPeriodStart = addDays(currentStart, len);
+    var ovulationDate = addDays(nextPeriodStart, -14);
+    var fertileStart = addDays(ovulationDate, -5);
+    return { today: today, currentStart: currentStart, cycleDay: cycleDay, nextPeriodStart: nextPeriodStart, ovulationDate: ovulationDate, fertileStart: fertileStart };
+  }
+
+  function buildMarkedDates() {
+    var marked = {};
+    var start = midnight(cycleState.lastPeriod);
+    var len = cycleState.cycleLength;
+    for (var c = -6; c <= 8; c++) {
+      var cStart = addDays(start, c * len);
+      for (var p = 0; p < cycleState.periodLength; p++) marked[dateKey(addDays(cStart, p))] = 'period';
+      var ov = addDays(cStart, len - 14);
+      for (var f = 5; f >= 1; f--) marked[dateKey(addDays(ov, -f))] = 'fertile';
+      marked[dateKey(ov)] = 'ovulation';
+    }
+    return marked;
+  }
+
+  function renderMain() {
+    var info = cycleInfoFor(new Date());
+    var isPeriod = info.cycleDay <= cycleState.periodLength;
+    var isOvulation = info.today.getTime() === midnight(info.ovulationDate).getTime();
+    var isFertile = info.today >= midnight(info.fertileStart) && info.today < midnight(info.ovulationDate);
+
+    var badgeDot = document.getElementById('mainBadgeDot'), badgeLabel = document.getElementById('mainBadgeLabel'), badge = document.getElementById('mainBadge'), headline = document.getElementById('mainHeadline'), glow = document.getElementById('mainRingGlow');
+    var stateColor;
+    if (isPeriod) {
+      badge.style.background = 'var(--accent-red-soft)'; badgeDot.style.background = 'var(--accent-red)'; badgeLabel.style.color = 'var(--accent-red)';
+      badgeLabel.textContent = 'Período activo';
+      headline.innerHTML = 'Hoy es día ' + info.cycleDay + ' de tu <span style="color:var(--accent-red);">período</span>';
+      glow.style.background = 'var(--accent-red)'; stateColor = 'var(--accent-red)';
+    } else if (isOvulation) {
+      badge.style.background = 'var(--accent-blue-soft)'; badgeDot.style.background = 'var(--accent-blue)'; badgeLabel.style.color = 'var(--accent-blue)';
+      badgeLabel.textContent = 'Ovulación estimada';
+      headline.innerHTML = 'Hoy es tu pico de <span style="color:var(--accent-blue);">fertilidad</span>';
+      glow.style.background = 'var(--accent-blue)'; stateColor = 'var(--accent-blue)';
+    } else if (isFertile) {
+      badge.style.background = 'var(--accent-green-soft)'; badgeDot.style.background = 'var(--accent-green)'; badgeLabel.style.color = 'var(--accent-green)';
+      badgeLabel.textContent = 'Ventana fértil';
+      headline.innerHTML = 'Estás en tu ventana <span style="color:var(--accent-green);">fértil</span>';
+      glow.style.background = 'var(--accent-green)'; stateColor = 'var(--accent-green)';
+    } else {
+      badge.style.background = 'var(--accent-red-soft)'; badgeDot.style.background = 'var(--accent-red)'; badgeLabel.style.color = 'var(--accent-red)';
+      badgeLabel.textContent = 'Ciclo en curso';
+      headline.innerHTML = 'Tu <span style="color:var(--accent-red);">ciclo</span> va por buen camino';
+      glow.style.background = 'var(--accent-blue)'; stateColor = 'var(--accent-red)';
+    }
+
+    document.getElementById('mainCycleDay').textContent = info.cycleDay;
+    document.getElementById('mainCycleTotal').textContent = 'de ' + cycleState.cycleLength + ' días';
+    document.getElementById('settingsCycleSummary').textContent = 'Ciclo de ' + cycleState.cycleLength + ' días · día ' + info.cycleDay;
+    document.getElementById('settingsCycleLenValue').textContent = cycleState.cycleLength + ' días / ' + cycleState.periodLength + ' días';
+
+    var C = 590.6, len = cycleState.cycleLength, perDay = C / len;
+    var periodLen = perDay * cycleState.periodLength;
+    var ovOffset = len - 14;
+    var fertileStartOffset = ovOffset - 5;
+    var fertileLen = perDay * 5;
+    document.getElementById('ringPeriodArc').setAttribute('stroke-dasharray', '0 ' + periodLen.toFixed(1) + ' ' + (C - periodLen).toFixed(1));
+    document.getElementById('ringFertileArc').setAttribute('stroke-dasharray', (perDay * fertileStartOffset).toFixed(1) + ' ' + fertileLen.toFixed(1) + ' ' + (C - perDay * fertileStartOffset - fertileLen).toFixed(1));
+    var angle = (ovOffset / len) * 2 * Math.PI - Math.PI / 2;
+    var mx = 108 + 94 * Math.cos(angle), my = 108 + 94 * Math.sin(angle);
+    var marker = document.getElementById('ringMarker');
+    marker.style.left = (mx - 7) + 'px'; marker.style.top = (my - 7) + 'px';
+
+    var todayOffset = info.cycleDay - 1;
+    var todayAngle = (todayOffset / len) * 2 * Math.PI - Math.PI / 2;
+    var tx = 108 + 94 * Math.cos(todayAngle), ty = 108 + 94 * Math.sin(todayAngle);
+    var todayEl = document.getElementById('todayMarker');
+    todayEl.style.left = (tx - 8) + 'px'; todayEl.style.top = (ty - 8) + 'px';
+    document.getElementById('todayPulseRing').style.background = stateColor;
+
+    var daysToNext = Math.round((info.nextPeriodStart - info.today) / DAY);
+    document.getElementById('nextPeriodDateLabel').textContent = formatEs(info.nextPeriodStart);
+    document.getElementById('nextPeriodSubLabel').textContent = daysToNext <= 0 ? 'Hoy' : 'En ' + daysToNext + ' días';
+
+    var daysToOv = Math.round((midnight(info.ovulationDate) - info.today) / DAY);
+    if (daysToOv === 0) {
+      document.getElementById('ovulationDateLabel').textContent = 'Hoy';
+      document.getElementById('ovulationSubLabel').textContent = 'Pico de fertilidad';
+    } else if (daysToOv > 0) {
+      document.getElementById('ovulationDateLabel').textContent = formatEs(info.ovulationDate);
+      document.getElementById('ovulationSubLabel').textContent = 'En ' + daysToOv + ' días';
+    } else {
+      var nextOv = addDays(info.ovulationDate, cycleState.cycleLength);
+      document.getElementById('ovulationDateLabel').textContent = formatEs(nextOv);
+      document.getElementById('ovulationSubLabel').textContent = 'Próximo ciclo';
+    }
+  }
+
+  var calendarMonthOffset = 0;
+  function shiftCalendarMonth(delta) { calendarMonthOffset += delta; renderCalendar(); }
+
+  function renderCalendar() {
+    var base = new Date(); base.setDate(1);
+    var view = new Date(base.getFullYear(), base.getMonth() + calendarMonthOffset, 1);
+    var year = view.getFullYear(), month = view.getMonth();
+    document.getElementById('calendarMonthLabel').textContent = MONTHS_ES[month] + ' ' + year;
+
+    var marked = buildMarkedDates();
+    var firstWeekday = (new Date(year, month, 1).getDay() + 6) % 7; // Monday = 0
+    var daysInMonth = new Date(year, month + 1, 0).getDate();
+    var calGrid = document.getElementById('calendarGrid');
+    calGrid.innerHTML = '';
+    var totalCells = Math.ceil((firstWeekday + daysInMonth) / 7) * 7;
+    for (var i = 0; i < totalCells; i++) {
+      var num = i - firstWeekday + 1;
+      var show = num >= 1 && num <= daysInMonth;
+      var wrap = document.createElement('div');
+      wrap.style.cssText = 'display:flex;align-items:center;justify-content:center;';
+      if (show) {
+        var cell = document.createElement('div');
+        var style = 'width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;';
+        var kind = marked[year + '-' + month + '-' + num];
+        if (kind === 'period') {
+          style += 'background:var(--accent-red);color:var(--accent-text);font-weight:700;';
+        } else if (kind === 'ovulation') {
+          style += 'background:var(--surface-raised);color:var(--accent-blue);font-weight:700;border:2px solid var(--accent-blue);box-shadow:var(--clay-shadow);';
+        } else if (kind === 'fertile') {
+          style += 'background:var(--accent-green-soft);color:var(--accent-green);font-weight:600;';
+        } else {
+          style += 'color:var(--text-muted);font-weight:500;';
+        }
+        cell.style.cssText = style;
+        cell.textContent = num;
+        wrap.appendChild(cell);
+      }
+      calGrid.appendChild(wrap);
+    }
+
+    var info = cycleInfoFor(new Date());
+    document.getElementById('calendarCycleLabel').textContent = 'Día ' + info.cycleDay + ' de ' + cycleState.cycleLength;
+    var daysToOv = Math.round((midnight(info.ovulationDate) - info.today) / DAY);
+    var insight = daysToOv === 0 ? 'Hoy es tu día estimado de ovulación'
+      : daysToOv > 0 ? 'Tu ovulación estimada es en ' + daysToOv + ' días'
+      : 'Tu próximo período llega en ' + Math.round((info.nextPeriodStart - info.today) / DAY) + ' días';
+    document.getElementById('calendarInsightLabel').textContent = insight;
+  }
+
+  /* One-time async boundary: decrypt everything, populate the in-memory state, then run
+     the exact same init sequence this app has always run — nothing below here changed,
+     it's just now waiting on the three secureGet() calls first.
+     Kicked off once here and reused via .then() below (twice — see note further down) so
+     the decrypt-and-populate step only ever runs a single time, however many init chunks
+     need to wait on it. Every function DECLARATION in this script (renderStats,
+     computeSymptomPrediction, renderPrediction, etc.) is deliberately kept OUTSIDE any
+     .then() callback — a function declared inside one is scoped to that callback only,
+     and markPeriodStart/saveOnboarding call renderStats() from plain outer scope. Only the
+     executable init statements that actually read cycleState get wrapped. */
+  async function bootstrapSecureState() {
+    var rawCycle = await secureGet('lunaraCycle', null);
+    cycleState = sanitizeCycleState(rawCycle);
+    var rawHistory = await secureGet('lunaraPeriodHistory', []);
+    periodHistoryCache = (rawHistory || []).map(function(s){ return new Date(s); });
+    symptomLogCache = await secureGet('lunaraSymptomLog', []);
+  }
+  var bootstrapReady = bootstrapSecureState();
+
+  bootstrapReady.then(function(){
+  document.getElementById('lastPeriodInput').valueAsDate = cycleState.lastPeriod;
+  document.getElementById('lastPeriodInput').max = midnight(new Date()).toISOString().slice(0, 10); // never a future period start
+  document.getElementById('cycleLenInput').value = Math.min(45, Math.max(21, cycleState.cycleLength));
+  document.getElementById('periodLenInput').value = cycleState.periodLength;
+  document.getElementById('cycleLenLabel').textContent = cycleState.cycleLength + ' días';
+  document.getElementById('periodLenLabel').textContent = cycleState.periodLength + ' días';
+  renderMain();
+  renderCalendar();
+  }); // end first bootstrapReady.then(...) — the render function declarations below stay outside it
+
+  /* ---------- Real stats + symptom-prediction, from actual logged data ---------- */
+  function getPeriodStarts() {
+    var sorted = loadPeriodHistory().sort(function(a, b){ return a - b; });
+    // Collapse any same-day duplicates (e.g. from data saved before markPeriodStart de-duped) —
+    // a 0-day gap between two "cycles" is nonsensical and would skew every average below.
+    var out = [];
+    for (var i = 0; i < sorted.length; i++) {
+      if (i === 0 || sorted[i].getTime() !== sorted[i - 1].getTime()) out.push(sorted[i]);
+    }
+    return out;
+  }
+
+  function computeCycleLengths() {
+    var starts = getPeriodStarts();
+    var lens = [];
+    for (var i = 0; i < starts.length - 1; i++) {
+      lens.push({ start: starts[i], len: Math.round((starts[i + 1] - starts[i]) / DAY) });
+    }
+    return lens;
+  }
+
+  function computeRegularity(lens) {
+    if (lens.length === 0) return null;
+    var vals = lens.map(function(l){ return l.len; });
+    var avg = vals.reduce(function(a, b){ return a + b; }, 0) / vals.length;
+    var variance = vals.reduce(function(a, b){ return a + Math.pow(b - avg, 2); }, 0) / vals.length;
+    var stdDev = Math.sqrt(variance);
+    var pct = avg > 0 ? Math.round(100 * (1 - stdDev / avg)) : 100;
+    return Math.max(0, Math.min(100, pct));
+  }
+
+  function renderStats() {
+    var lens = computeCycleLengths();
+    var recent = lens.slice(-6);
+    var barsEl = document.getElementById('statsBars'), labelsEl = document.getElementById('statsLabels');
+    barsEl.innerHTML = ''; labelsEl.innerHTML = '';
+    var chartCard = document.getElementById('statsChartCard'), emptyMsg = document.getElementById('statsEmpty');
+
+    if (recent.length === 0) {
+      chartCard.style.display = 'none';
+      emptyMsg.style.display = 'block';
+    } else {
+      chartCard.style.display = 'block';
+      emptyMsg.style.display = 'none';
+      var max = Math.max.apply(null, recent.map(function(r){ return r.len; }));
+      recent.forEach(function(r, i){
+        var col = document.createElement('div');
+        col.style.cssText = 'display:flex;flex-direction:column;align-items:center;gap:8px;width:32px;';
+        var h = Math.round((r.len / max) * 80) + 10;
+        var color = (i === recent.length - 1) ? 'var(--accent-red)' : 'var(--accent-red-soft)';
+        col.innerHTML = '<span style="font-size:10px;color:var(--text-faint);font-weight:700;">' + r.len + '</span><div style="width:16px;height:' + h + 'px;border-radius:8px;background:' + color + ';"></div>';
+        barsEl.appendChild(col);
+        var lbl = document.createElement('span');
+        lbl.style.cssText = 'font-size:10px;color:var(--text-faint);width:32px;text-align:center;';
+        lbl.textContent = MONTHS_SHORT_ES[r.start.getMonth()];
+        labelsEl.appendChild(lbl);
+      });
+    }
+
+    var avgCycle = recent.length ? Math.round(recent.reduce(function(a, b){ return a + b.len; }, 0) / recent.length) : cycleState.cycleLength;
+    document.getElementById('statAvgCycle').textContent = avgCycle;
+    document.getElementById('statAvgPeriod').textContent = cycleState.periodLength;
+    var regularity = computeRegularity(recent);
+    document.getElementById('statRegularity').textContent = regularity === null ? '--' : regularity + '%';
+
+    var insight = document.getElementById('statsInsight');
+    if (recent.length === 0) {
+      insight.textContent = 'Registra tu período para empezar a ver información sobre tu ciclo';
+    } else if (recent.length < 3) {
+      insight.textContent = 'Vas registrando bien, sigue así — con más ciclos las predicciones serán más precisas';
+    } else if (regularity >= 85) {
+      insight.textContent = 'Tus últimos ' + recent.length + ' ciclos han sido muy regulares, tu cuerpo lleva un ritmo constante';
+    } else {
+      insight.textContent = 'Tus últimos ' + recent.length + ' ciclos han variado un poco — es normal, sigue registrando para afinar tus predicciones';
+    }
+
+    document.getElementById('statsTitle').textContent = recent.length ? recent.length + (recent.length === 1 ? ' ciclo registrado' : ' ciclos registrados') : 'Tus ciclos';
+    document.getElementById('statsSubtitle').textContent = recent.length ? 'Así se ha movido tu cuerpo' : 'Aquí verás tus patrones con el tiempo';
+
+    var historyEl = document.getElementById('historyList');
+    historyEl.innerHTML = '';
+    if (recent.length === 0) {
+      var empty = document.createElement('div');
+      empty.style.cssText = 'padding:18px;text-align:center;font-size:12.5px;color:var(--text-faint);';
+      empty.textContent = 'Todavía no hay ciclos completos en tu historial';
+      historyEl.appendChild(empty);
+    } else {
+      var ordered = recent.slice().reverse();
+      ordered.forEach(function(r, i){
+        var row = document.createElement('div');
+        row.style.cssText = 'display:flex;align-items:center;justify-content:space-between;padding:14px 18px;' + (i < ordered.length - 1 ? 'border-bottom:var(--row-border);' : '');
+        var monthLabel = MONTHS_ES[r.start.getMonth()] + ' ' + r.start.getFullYear();
+        row.innerHTML = '<div style="display:flex;flex-direction:column;gap:3px;"><span style="font-size:13.5px;font-weight:600;">' + monthLabel + '</span><span style="font-size:11px;color:var(--text-faint);">Período: ' + cycleState.periodLength + ' días</span></div><div style="display:flex;align-items:center;gap:10px;"><span style="font-family:\'Bricolage Grotesque\',sans-serif;font-size:14px;font-weight:700;color:var(--accent-red);">' + r.len + ' días</span></div>';
+        historyEl.appendChild(row);
+      });
+    }
+  }
+
+  function computeSymptomPrediction() {
+    var log = loadSymptomLog();
+    var starts = getPeriodStarts();
+    if (!starts.length || !log.length) return null;
+    var todayCycleDay = cycleInfoFor(new Date()).cycleDay;
+    /* Group by cycle first, not by log entry — a cycle with two comparable days that both
+       mention "Cólicos" must still count as ONE cycle where cólicos showed up, or the
+       percentage below can run past 100%. */
+    var perCycleSymptoms = {};
+    log.forEach(function(entry){
+      var d = midnight(new Date(entry.date + 'T00:00:00'));
+      var start = null;
+      starts.forEach(function(s){ if (s <= d && (!start || s > start)) start = s; });
+      if (!start) return;
+      var cd = Math.round((d - start) / DAY) + 1;
+      if (Math.abs(cd - todayCycleDay) <= 1) {
+        var key = start.getTime();
+        if (!perCycleSymptoms[key]) perCycleSymptoms[key] = {};
+        (entry.symptoms || []).forEach(function(sym){ perCycleSymptoms[key][sym] = true; });
+      }
+    });
+    var cycleKeys = Object.keys(perCycleSymptoms);
+    var total = cycleKeys.length;
+    if (total < 2) return null;
+    var tally = {};
+    cycleKeys.forEach(function(key){
+      Object.keys(perCycleSymptoms[key]).forEach(function(sym){ tally[sym] = (tally[sym] || 0) + 1; });
+    });
+    var results = Object.keys(tally).map(function(k){ return { label: k, pct: Math.round(100 * tally[k] / total) }; });
+    results.sort(function(a, b){ return b.pct - a.pct; });
+    return { count: total, top: results.slice(0, 2) };
+  }
+
+  function renderPrediction() {
+    var pred = computeSymptomPrediction();
+    var text = document.getElementById('predictionText'), badges = document.getElementById('predictionBadges');
+    badges.innerHTML = '';
+    if (!pred || !pred.top.length) {
+      text.innerHTML = 'Registra tus síntomas en un par de ciclos más y aquí verás qué es probable que sientas hoy';
+      return;
+    }
+    var names = pred.top.map(function(t){ return '<strong>' + t.label.toLowerCase() + '</strong>'; }).join(' y ');
+    text.innerHTML = 'En tus últimos ' + pred.count + ' ciclos, este día trajo ' + names;
+    pred.top.forEach(function(t){
+      var b = document.createElement('span');
+      b.style.cssText = 'font-size:11px;font-weight:700;padding:4px 10px;border-radius:999px;background:var(--accent-blue-soft);color:var(--accent-blue);';
+      b.textContent = t.pct + '% ' + t.label.toLowerCase();
+      badges.appendChild(b);
+    });
+  }
+
+  bootstrapReady.then(function(){
+  renderStats();
+  renderPrediction();
+  initSheet('symptoms');
+  initSheet('login');
+  }); // end second bootstrapReady.then(...)
+</script>
