@@ -549,6 +549,13 @@
         <div style="flex:1;display:flex;flex-direction:column;gap:2px;"><span id="settingsName" style="font-size:15.5px;font-weight:700;font-family:'Bricolage Grotesque',sans-serif;">Agrega tu nombre</span><span id="settingsCycleSummary" style="font-size:12px;color:var(--text-faint);">Ciclo de 28 días · día 14</span></div>
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--text-faint)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"></path></svg>
       </div>
+      <div class="glass" style="margin-top:12px;overflow:hidden;">
+        <div class="row" style="cursor:pointer;" onclick="openSheet('login')">
+          <div class="clay-icon" style="width:30px;height:30px;border-radius:10px;color:var(--accent-blue);flex-shrink:0;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M8 11l4 4 4-4"></path><path d="M4 19h16"></path></svg></div>
+          <span id="accountRowLabel" style="flex:1;font-size:13.5px;font-weight:600;">Iniciar sesión y sincronizar</span>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--text-faint)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"></path></svg>
+        </div>
+      </div>
       <span style="display:block;margin:24px 0 10px;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text-faint);">Preferencias</span>
       <div class="glass" style="overflow:hidden;">
         <div class="row" style="cursor:pointer;" onclick="toggleTheme()">
@@ -619,19 +626,41 @@
       <div class="sheet-handle"><span class="sheet-grabber"></span></div>
       <div class="sheet-body">
         <div style="padding:2px 24px 28px;display:flex;flex-direction:column;">
-          <div style="display:flex;flex-direction:column;align-items:center;text-align:center;gap:18px;padding:8px 0 6px;">
-            <div class="clay-icon" style="width:64px;height:64px;border-radius:20px;"><svg width="30" height="30" viewBox="0 0 24 24" fill="var(--accent-red)"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg></div>
-            <div>
-              <span class="kicker">Cuentas y sincronización</span>
-              <h1 style="margin:8px 0 10px;font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:27px;letter-spacing:-0.4px;">Muy pronto</h1>
-              <p style="margin:0 auto;font-size:13.5px;line-height:1.55;color:var(--text-muted);max-width:260px;">Estamos construyendo cuentas para que puedas compartir tu ciclo con tu pareja y usar Lunara en más de un dispositivo. Por ahora tus datos viven solo en este dispositivo, cifrados.</p>
+
+          <div id="loginSignedOut" style="display:flex;flex-direction:column;">
+            <div style="display:flex;flex-direction:column;align-items:center;text-align:center;gap:18px;padding:8px 0 6px;">
+              <div class="clay-icon" style="width:64px;height:64px;border-radius:20px;"><svg width="30" height="30" viewBox="0 0 24 24" fill="var(--accent-red)"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg></div>
+              <div>
+                <span class="kicker">Cuenta Lunara</span>
+                <h1 style="margin:8px 0 10px;font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:27px;letter-spacing:-0.4px;">Inicia sesión</h1>
+                <p style="margin:0 auto;font-size:13.5px;line-height:1.55;color:var(--text-muted);max-width:260px;">Para guardar tu ciclo en la nube y usarlo en más de un dispositivo. Compartir con tu pareja llega después.</p>
+              </div>
             </div>
+            <div class="glass" style="margin-top:8px;padding:15px 16px;display:flex;align-items:center;gap:10px;">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="var(--text-faint)" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="3"></rect><path d="M3.5 7l8.5 6 8.5-6"></path></svg>
+              <input type="email" id="loginEmail" placeholder="tu@correo.com" style="flex:1;border:none;background:transparent;font-family:'Manrope',sans-serif;font-size:14px;color:var(--text);outline:none;">
+            </div>
+            <button class="btn-primary" style="margin-top:14px;" onclick="sendMagicLink()" id="sendMagicLinkBtn">
+              Enviar enlace de acceso
+            </button>
+            <p id="loginSentMsg" style="display:none;margin:14px 0 0;text-align:center;font-size:12.5px;color:var(--text-muted);">Revisa tu correo — te enviamos un enlace para entrar, sin contraseña.</p>
+            <p id="loginErrorMsg" style="display:none;margin:14px 0 0;text-align:center;font-size:12.5px;color:var(--accent-red);"></p>
           </div>
-          <div style="display:flex;flex-direction:column;gap:12px;margin-top:8px;">
-            <button class="btn-primary" onclick="closeSheet('login')">
-              Entendido
+
+          <div id="loginSignedIn" style="display:none;flex-direction:column;">
+            <div style="display:flex;flex-direction:column;align-items:center;text-align:center;gap:18px;padding:8px 0 6px;">
+              <div class="clay-icon" style="width:64px;height:64px;border-radius:20px;color:var(--accent-red);"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l4.5 4.5L19 7"></path></svg></div>
+              <div>
+                <span class="kicker">Sesión iniciada</span>
+                <h1 style="margin:8px 0 10px;font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:22px;letter-spacing:-0.3px;word-break:break-all;" id="loginEmailDisplay"></h1>
+                <p style="margin:0 auto;font-size:13.5px;line-height:1.55;color:var(--text-muted);max-width:260px;">Tu ciclo se está guardando en la nube y va a estar disponible en cualquier dispositivo donde inicies sesión con este correo.</p>
+              </div>
+            </div>
+            <button class="btn-glass" style="margin-top:8px;" onclick="signOutUser()">
+              Cerrar sesión
             </button>
           </div>
+
         </div>
       </div>
     </div>
@@ -705,6 +734,17 @@
 </div>
 <p class="hint">Toca la pantalla de apertura para saltarla, y usa la barra inferior, el botón "+" y los botones para navegar — cada pantalla es real HTML/CSS/JS.</p>
 
+<!-- Backend: Supabase (Postgres + Auth), for real accounts and cross-device
+     sync. This CDN script only loads on the real deployed site — the
+     Artifact preview's CSP blocks third-party scripts, so auth/sync won't
+     work there; that's expected, not a bug. -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script>
+  var SUPABASE_URL = 'https://brirbrebtnuucofdtgvw.supabase.co';
+  var SUPABASE_ANON_KEY = 'sb_publishable_izU63GXu6QvbRF7p9IAeqQ_UBbvkOkC';
+  var sb = (typeof window.supabase !== 'undefined') ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
+  var currentUser = null;
+</script>
 <script>
   /* iOS Safari's 100dvh is unreliable right after load (it can report the
      viewport height from before the toolbar settles), which left a strip
@@ -1038,6 +1078,10 @@
   var MONTHS_SHORT_ES = ['ene','feb','mar','abr','may','jun','jul','ago','sept','oct','nov','dic'];
 
   function midnight(d) { var x = new Date(d); x.setHours(0,0,0,0); return x; }
+  /* Local Y/M/D → "YYYY-MM-DD", for writing to Postgres 'date' columns.
+     Deliberately NOT toISOString().slice(0,10) — that reads UTC components,
+     which silently shifts the date by a day for any timezone ahead of UTC. */
+  function toDateStr(d) { return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); }
   function addDays(d, n) { return new Date(d.getTime() + n * DAY); }
   function dateKey(d) { return d.getFullYear() + '-' + d.getMonth() + '-' + d.getDate(); }
   function formatEs(d) { return d.getDate() + ' ' + MONTHS_SHORT_ES[d.getMonth()]; }
@@ -1119,8 +1163,52 @@
      (see bootstrapSecureState at the bottom of this script). */
   var cycleState = sanitizeCycleState(null);
 
+  /* ============================================================
+     Cloud sync (Supabase) — additive on top of the existing local-first
+     architecture. currentUser is null when signed out, and every push
+     function below no-ops in that case, so signed-out behavior is exactly
+     what it was before: local-only, encrypted, no network calls. Once
+     signed in, every local save also fires an unawaited background push —
+     same fire-and-forget pattern secureSet already uses for local storage.
+     period_history and symptom_log are small (a handful to a few dozen
+     rows even after months of daily use), so delete-then-insert on every
+     save is simplest-correct rather than diffing — performance is a
+     non-issue at this scale.
+     ============================================================ */
+  function cloudPushCycle() {
+    if (!currentUser || !sb) return;
+    sb.from('cycle_settings').upsert({
+      user_id: currentUser.id,
+      last_period: toDateStr(cycleState.lastPeriod),
+      cycle_length: cycleState.cycleLength,
+      period_length: cycleState.periodLength,
+      updated_at: new Date().toISOString()
+    }).then(function(res){ if (res.error) console.error('cloud sync (cycle):', res.error.message); });
+  }
+  function cloudPushPeriodHistory(hist) {
+    if (!currentUser || !sb) return;
+    sb.from('period_history').delete().eq('user_id', currentUser.id).then(function(){
+      if (!hist.length) return;
+      var rows = hist.map(function(d){ return { user_id: currentUser.id, period_date: toDateStr(d) }; });
+      sb.from('period_history').insert(rows).then(function(res){ if (res.error) console.error('cloud sync (periods):', res.error.message); });
+    });
+  }
+  function cloudPushSymptomLog(log) {
+    if (!currentUser || !sb) return;
+    sb.from('symptom_log').delete().eq('user_id', currentUser.id).then(function(){
+      if (!log.length) return;
+      var rows = log.map(function(e){ return { user_id: currentUser.id, log_date: e.date, symptoms: e.symptoms || [], severity: e.severity, notes: e.notes }; });
+      sb.from('symptom_log').insert(rows).then(function(res){ if (res.error) console.error('cloud sync (symptoms):', res.error.message); });
+    });
+  }
+  function cloudPushProfile() {
+    if (!currentUser || !sb) return;
+    sb.from('profiles').upsert({ id: currentUser.id, name: userName, updated_at: new Date().toISOString() }).then(function(res){ if (res.error) console.error('cloud sync (profile):', res.error.message); });
+  }
+
   function saveCycleState(s) {
     secureSet('lunaraCycle', { lastPeriod: s.lastPeriod.toISOString(), cycleLength: s.cycleLength, periodLength: s.periodLength });
+    cloudPushCycle();
   }
 
   /* Same in-memory-cache-plus-background-persist pattern for period history and the symptom log. */
@@ -1133,6 +1221,7 @@
   function savePeriodHistory(hist) {
     periodHistoryCache = hist.slice();
     secureSet('lunaraPeriodHistory', hist.map(function(d){ return d.toISOString(); }));
+    cloudPushPeriodHistory(periodHistoryCache);
   }
   function loadSymptomLog() {
     return symptomLogCache.slice();
@@ -1140,6 +1229,7 @@
   function saveSymptomLog(log) {
     symptomLogCache = log.slice();
     secureSet('lunaraSymptomLog', log);
+    cloudPushSymptomLog(symptomLogCache);
   }
 
   var userName = '';
@@ -1147,6 +1237,7 @@
     userName = (name || '').trim().slice(0, 40);
     secureSet('lunaraProfile', { name: userName });
     renderUserName();
+    cloudPushProfile();
   }
   function exportUserData() {
     var payload = {
@@ -1225,6 +1316,114 @@
     if (initial) initial.textContent = userName ? userName.charAt(0).toUpperCase() : '?';
     var settingsName = document.getElementById('settingsName');
     if (settingsName) settingsName.textContent = userName || 'Agrega tu nombre';
+  }
+
+  /* ---------- Auth (Supabase, email magic link — no password) ---------- */
+  function sendMagicLink() {
+    if (!sb) return;
+    var email = document.getElementById('loginEmail').value.trim();
+    var errorMsg = document.getElementById('loginErrorMsg');
+    var sentMsg = document.getElementById('loginSentMsg');
+    errorMsg.style.display = 'none';
+    sentMsg.style.display = 'none';
+    if (!email) return;
+    var btn = document.getElementById('sendMagicLinkBtn');
+    btn.textContent = 'Enviando...';
+    sb.auth.signInWithOtp({ email: email, options: { emailRedirectTo: window.location.origin + window.location.pathname } }).then(function(res){
+      btn.textContent = 'Enviar enlace de acceso';
+      if (res.error) {
+        errorMsg.textContent = 'No se pudo enviar el enlace: ' + res.error.message;
+        errorMsg.style.display = 'block';
+      } else {
+        sentMsg.style.display = 'block';
+      }
+    });
+  }
+  function signOutUser() {
+    if (!sb) return;
+    sb.auth.signOut().then(function(){ closeSheet('login'); });
+  }
+  function renderAccountUI(user) {
+    var signedOut = document.getElementById('loginSignedOut');
+    var signedIn = document.getElementById('loginSignedIn');
+    var accountRowLabel = document.getElementById('accountRowLabel');
+    if (user) {
+      if (signedOut) signedOut.style.display = 'none';
+      if (signedIn) signedIn.style.display = 'flex';
+      var emailDisplay = document.getElementById('loginEmailDisplay');
+      if (emailDisplay) emailDisplay.textContent = user.email;
+      if (accountRowLabel) accountRowLabel.textContent = 'Sesión iniciada · ' + user.email;
+    } else {
+      if (signedOut) signedOut.style.display = 'flex';
+      if (signedIn) signedIn.style.display = 'none';
+      if (accountRowLabel) accountRowLabel.textContent = 'Iniciar sesión y sincronizar';
+    }
+  }
+  /* Runs once per sign-in (guarded by the currentUser.id check where this is
+     called from). Merges whatever's already in the cloud (a returning
+     device) with whatever's local (this device) — union of period/symptom
+     dates so nothing already logged anywhere is lost, cloud wins on a
+     same-date conflict since it represents however many other devices have
+     already synced. Re-saving through the normal save* functions afterward
+     both persists the merged result locally and pushes it back to the
+     cloud, so every device converges on the same state. */
+  async function pullAndMergeOnSignIn(user) {
+    currentUser = user;
+    var results = await Promise.all([
+      sb.from('cycle_settings').select('*').eq('user_id', user.id).maybeSingle(),
+      sb.from('period_history').select('period_date').eq('user_id', user.id),
+      sb.from('symptom_log').select('*').eq('user_id', user.id),
+      sb.from('profiles').select('*').eq('id', user.id).maybeSingle()
+    ]);
+    var cloudCycle = results[0].data;
+    var cloudPeriods = results[1].data || [];
+    var cloudSymptoms = results[2].data || [];
+    var cloudProfile = results[3].data;
+
+    var localDates = loadPeriodHistory().map(function(d){ return d.toISOString().slice(0, 10); });
+    var cloudDates = cloudPeriods.map(function(r){ return r.period_date; });
+    var dateSet = {};
+    localDates.concat(cloudDates).forEach(function(d){ dateSet[d] = true; });
+    var mergedDates = Object.keys(dateSet).sort();
+
+    var localLog = loadSymptomLog();
+    var mergedLogByDate = {};
+    localLog.forEach(function(e){ mergedLogByDate[e.date] = e; });
+    cloudSymptoms.forEach(function(e){ mergedLogByDate[e.log_date] = { date: e.log_date, symptoms: e.symptoms || [], severity: e.severity, notes: e.notes }; });
+
+    if (cloudCycle) {
+      // Postgres 'date' columns round-trip as bare "YYYY-MM-DD" strings, which
+      // JS parses as UTC midnight — appending T00:00:00 forces local-time
+      // parsing instead, same fix already used for symptom log dates below,
+      // avoiding an off-by-one day shift for anyone west of UTC.
+      cycleState = sanitizeCycleState({ lastPeriod: cloudCycle.last_period + 'T00:00:00', cycleLength: cloudCycle.cycle_length, periodLength: cloudCycle.period_length });
+    }
+    if (cloudProfile && cloudProfile.name) userName = cloudProfile.name;
+
+    saveCycleState(cycleState);
+    savePeriodHistory(mergedDates.map(function(d){ return new Date(d + 'T00:00:00'); }));
+    saveSymptomLog(Object.keys(mergedLogByDate).map(function(k){ return mergedLogByDate[k]; }));
+    saveUserName(userName);
+
+    renderMain();
+    renderCalendar();
+    renderStats();
+    renderPrediction();
+    if (typeof renderMarkPeriodList === 'function') renderMarkPeriodList();
+    if (typeof renderSymptomHistory === 'function') renderSymptomHistory();
+  }
+  if (sb) {
+    sb.auth.onAuthStateChange(function(event, session){
+      var user = session && session.user ? session.user : null;
+      if (user && (!currentUser || currentUser.id !== user.id)) {
+        pullAndMergeOnSignIn(user).then(function(){ renderAccountUI(user); settingsToastMsg('Sincronizado'); });
+      } else if (!user && currentUser) {
+        currentUser = null;
+        renderAccountUI(null);
+      } else {
+        renderAccountUI(user);
+      }
+    });
   }
 
   /* dateOverride lets this log a period that started on a PAST day, not only "today" —
