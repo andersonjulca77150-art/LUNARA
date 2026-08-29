@@ -79,7 +79,7 @@
     transition: opacity 0.16s ease;
   }
   .screen.active { opacity: 1; pointer-events: auto; z-index: 2; }
-  .scroll-area { position: absolute; inset: 0; overflow-y: auto; overflow-x: hidden; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+  .scroll-area { position: absolute; inset: 0; overflow-y: auto; overflow-x: hidden; -webkit-overflow-scrolling: touch; overscroll-behavior: contain; scrollbar-width: none; }
   .scroll-area::-webkit-scrollbar { display: none; }
   .pad { position: relative; padding: 30px 24px 0; }
   .pad.tall { padding-bottom: 110px; }
@@ -175,7 +175,7 @@
   .sheet-handle { flex-shrink: 0; display: flex; align-items: center; justify-content: center; padding: 12px 0 4px; cursor: grab; }
   .sheet-handle:active { cursor: grabbing; }
   .sheet-grabber { width: 36px; height: 5px; border-radius: 3px; background: var(--text-faint); opacity: 0.5; }
-  .sheet-body { overflow-y: auto; overflow-x: hidden; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+  .sheet-body { overflow-y: auto; overflow-x: hidden; -webkit-overflow-scrolling: touch; overscroll-behavior: contain; scrollbar-width: none; }
   .sheet-body::-webkit-scrollbar { display: none; }
 
   .faq-item { background: var(--surface-raised); box-shadow: var(--clay-shadow); border-radius: 18px; overflow: hidden; }
@@ -197,7 +197,16 @@
   }
 
   @media (max-width: 440px) {
-    html, body { height: 100%; }
+    /* iOS Safari lets the whole document rubber-band/bounce on a touch drag
+       unless it's explicitly pinned — without this, dragging a sheet (or even
+       a stray touch near the edge) could shift the entire page and briefly
+       expose the black body background above or below .phone. Locking the
+       document itself to the viewport removes the possibility entirely; the
+       inner .scroll-area / .sheet-body elements keep their own real scrolling. */
+    html, body {
+      height: 100%; position: fixed; inset: 0;
+      overflow: hidden; overscroll-behavior: none;
+    }
     body { padding: 0; gap: 0; background: #000; }
     .hint { display: none; }
     .phone {
@@ -390,7 +399,7 @@
         <div class="nav-icon" onclick="showScreen('stats')"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10M12 20V4M20 20v-7"></path></svg></div>
         <div class="nav-icon" onclick="showScreen('settings')"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.5"></circle><path d="M4.5 20c1.5-4 4.5-6 7.5-6s6 2 7.5 6"></path></svg></div>
       </div>
-      <div class="fab filled" onclick="openSheet('symptoms')"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"></path></svg></div>
+      <div class="fab filled" onclick="openSymptomsSheet()"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"></path></svg></div>
     </div>
     <div class="toast" id="mainToast">Período marcado hoy</div>
   </section>
@@ -433,7 +442,7 @@
         <div class="nav-icon" onclick="showScreen('stats')"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10M12 20V4M20 20v-7"></path></svg></div>
         <div class="nav-icon" onclick="showScreen('settings')"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.5"></circle><path d="M4.5 20c1.5-4 4.5-6 7.5-6s6 2 7.5 6"></path></svg></div>
       </div>
-      <div class="fab filled" onclick="openSheet('symptoms')"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"></path></svg></div>
+      <div class="fab filled" onclick="openSymptomsSheet()"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"></path></svg></div>
     </div>
   </section>
 
@@ -475,7 +484,7 @@
         <div class="nav-icon active"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10M12 20V4M20 20v-7"></path></svg></div>
         <div class="nav-icon" onclick="showScreen('settings')"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.5"></circle><path d="M4.5 20c1.5-4 4.5-6 7.5-6s6 2 7.5 6"></path></svg></div>
       </div>
-      <div class="fab filled" onclick="openSheet('symptoms')"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"></path></svg></div>
+      <div class="fab filled" onclick="openSymptomsSheet()"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"></path></svg></div>
     </div>
   </section>
 
@@ -487,6 +496,10 @@
       <div class="sheet-body">
         <div style="padding:2px 24px 28px;">
           <div style="text-align:center;"><span class="kicker">Registro diario</span><h1 class="title">¿Cómo te sientes?</h1></div>
+          <div class="glass" style="margin-top:16px;padding:14px 18px;display:flex;align-items:center;justify-content:space-between;">
+            <span style="font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-faint);font-weight:600;">Fecha</span>
+            <input type="date" id="symptomDate" class="lunara-date" style="font-size:15px;">
+          </div>
           <div style="margin-top:18px;background:var(--accent-blue-panel);border:1px solid var(--accent-blue-border);border-radius:22px;padding:17px 18px;display:flex;flex-direction:column;gap:10px;">
             <div style="display:flex;align-items:center;gap:9px;">
               <div style="width:28px;height:28px;border-radius:10px;background:var(--accent-blue-soft);display:flex;align-items:center;justify-content:center;color:var(--accent-blue);flex-shrink:0;"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l1.8 5.2L19 9l-5.2 1.8L12 16l-1.8-5.2L5 9l5.2-1.8L12 2Z"></path></svg></div>
@@ -516,6 +529,9 @@
             Guardar registro
             <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l4.5 4.5L19 7"></path></svg>
           </button>
+          <h2 style="margin:26px 0 12px;font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:15px;">Tus últimos registros</h2>
+          <p style="margin:0 0 12px;font-size:12px;color:var(--text-faint);">Toca una fecha para editarla, o bórrala si fue un error.</p>
+          <div id="symptomHistoryList" class="glass" style="overflow:hidden;"></div>
         </div>
       </div>
     </div>
@@ -571,6 +587,8 @@
       <span style="display:block;margin:24px 0 10px;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text-faint);">Datos y privacidad</span>
       <div class="glass" style="overflow:hidden;">
         <div class="row" style="cursor:pointer;" onclick="exportUserData()"><div class="clay-icon" style="width:30px;height:30px;border-radius:10px;color:var(--text-muted);flex-shrink:0;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M8 11l4 4 4-4"></path><path d="M4 19h16"></path></svg></div><span style="flex:1;font-size:13.5px;font-weight:600;">Exportar mis datos</span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--text-faint)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"></path></svg></div>
+        <div class="row" style="cursor:pointer;" onclick="triggerImport()"><div class="clay-icon" style="width:30px;height:30px;border-radius:10px;color:var(--text-muted);flex-shrink:0;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15V3M8 7l4-4 4 4"></path><path d="M4 19h16"></path></svg></div><span style="flex:1;font-size:13.5px;font-weight:600;">Importar datos</span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--text-faint)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"></path></svg></div>
+        <input type="file" id="importFileInput" accept="application/json" style="display:none;" onchange="handleImportFile(this)">
         <div class="row" style="cursor:pointer;" onclick="openSheet('faq')"><div class="clay-icon" style="width:30px;height:30px;border-radius:10px;color:var(--text-muted);flex-shrink:0;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="10.5" width="14" height="9" rx="2.5"></rect><path d="M8 10.5V8a4 4 0 0 1 8 0v2.5"></path></svg></div><span style="flex:1;font-size:13.5px;font-weight:600;">Privacidad y cifrado</span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--text-faint)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"></path></svg></div>
       </div>
       <div class="clay-icon" style="margin-top:24px;border-radius:22px;padding:20px;flex-direction:column;align-items:stretch;height:auto;">
@@ -589,7 +607,7 @@
         <div class="nav-icon" onclick="showScreen('stats')"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10M12 20V4M20 20v-7"></path></svg></div>
         <div class="nav-icon active"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.5"></circle><path d="M4.5 20c1.5-4 4.5-6 7.5-6s6 2 7.5 6"></path></svg></div>
       </div>
-      <div class="fab filled" onclick="openSheet('symptoms')"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"></path></svg></div>
+      <div class="fab filled" onclick="openSymptomsSheet()"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"></path></svg></div>
     </div>
   </section>
 
@@ -700,6 +718,15 @@
   window.addEventListener('resize', setRealVH);
   window.addEventListener('orientationchange', setRealVH);
   if (window.visualViewport) window.visualViewport.addEventListener('resize', setRealVH);
+
+  /* The manual light/dark toggle only ever set the attribute in memory — a
+     reload silently reverted to the system theme. Not sensitive data, so a
+     plain (unencrypted) localStorage read is fine, and doing it this early
+     avoids a flash of the wrong theme on load. */
+  try {
+    var savedTheme = localStorage.getItem('lunaraTheme');
+    if (savedTheme === 'dark' || savedTheme === 'light') document.documentElement.setAttribute('data-theme', savedTheme);
+  } catch (e) {}
 
   var splashTimer = setTimeout(function(){ showScreen('onboarding'); }, 1500);
 
@@ -911,6 +938,7 @@
     var next = effectiveTheme() === 'light' ? 'dark' : 'light';
     document.documentElement.setAttribute('data-theme', next);
     document.getElementById('themeValue').textContent = next === 'dark' ? 'Oscuro' : 'Claro';
+    try { localStorage.setItem('lunaraTheme', next); } catch (e) {}
   }
   document.getElementById('themeValue').textContent = effectiveTheme() === 'dark' ? 'Oscuro' : 'Claro';
   function selectSeverity(el) {
@@ -921,10 +949,13 @@
     el.classList.toggle('selected');
   }
   function saveSymptoms() {
+    var todayIso = midnight(new Date()).toISOString().slice(0, 10);
+    var dateVal = document.getElementById('symptomDate').value;
+    var entryDate = (dateVal && dateVal <= todayIso) ? dateVal : todayIso; // never a future entry, even if bypassed
     var selected = Array.prototype.map.call(document.querySelectorAll('#symptomGrid .chip.selected span'), function(s){ return s.textContent; });
     var severityEl = document.querySelector('.severity-pill.active');
     var entry = {
-      date: new Date().toISOString().slice(0, 10),
+      date: entryDate,
       symptoms: selected,
       severity: severityEl ? severityEl.textContent : null,
       notes: document.getElementById('symptomNotes').value
@@ -934,6 +965,7 @@
     log.push(entry);
     saveSymptomLog(log);
     renderPrediction();
+    renderSymptomHistory();
     var toast = document.getElementById('symptomToast');
     toast.classList.add('show');
     setTimeout(function(){ toast.classList.remove('show'); closeSheet('symptoms'); }, 900);
@@ -1133,10 +1165,49 @@
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
+    settingsToastMsg('Datos exportados');
+  }
+  function settingsToastMsg(msg) {
     var toast = document.getElementById('settingsToast');
-    toast.textContent = 'Datos exportados';
+    toast.textContent = msg;
     toast.classList.add('show');
     setTimeout(function(){ toast.classList.remove('show'); }, 1800);
+  }
+  /* Pairs with exportUserData — there's still no backend sync (see project
+     notes), so a manual export/import round-trip is the only way to move
+     data to a new phone or recover from a cleared browser. */
+  function triggerImport() {
+    document.getElementById('importFileInput').click();
+  }
+  function handleImportFile(input) {
+    var file = input.files && input.files[0];
+    if (!file) return;
+    var reader = new FileReader();
+    reader.onload = function() {
+      input.value = '';
+      var data;
+      try {
+        data = JSON.parse(reader.result);
+        if (!data || typeof data !== 'object' || !data.cycle || !data.cycle.lastPeriod) throw new Error('bad format');
+      } catch (e) {
+        settingsToastMsg('Ese archivo no es un respaldo válido de Lunara');
+        return;
+      }
+      if (!window.confirm('Esto va a reemplazar los datos actuales en este dispositivo con los del archivo. ¿Continuar?')) return;
+      cycleState = sanitizeCycleState(data.cycle);
+      saveCycleState(cycleState);
+      savePeriodHistory((data.periodHistory || []).map(function(s){ return new Date(s); }));
+      saveSymptomLog(Array.isArray(data.symptomLog) ? data.symptomLog : []);
+      saveUserName(data.name || '');
+      renderMain();
+      renderCalendar();
+      renderStats();
+      renderPrediction();
+      if (typeof renderMarkPeriodList === 'function') renderMarkPeriodList();
+      if (typeof renderSymptomHistory === 'function') renderSymptomHistory();
+      settingsToastMsg('Datos importados');
+    };
+    reader.readAsText(file);
   }
   function openEditNameSheet() {
     document.getElementById('editNameInput').value = userName;
@@ -1145,10 +1216,7 @@
   function confirmEditName() {
     saveUserName(document.getElementById('editNameInput').value);
     closeSheet('editName');
-    var toast = document.getElementById('settingsToast');
-    toast.textContent = 'Nombre guardado';
-    toast.classList.add('show');
-    setTimeout(function(){ toast.classList.remove('show'); }, 1800);
+    settingsToastMsg('Nombre guardado');
   }
   function renderUserName() {
     var greeting = document.getElementById('mainGreeting');
@@ -1269,6 +1337,71 @@
       delBtn.style.cssText = 'width:30px;height:30px;border-radius:10px;display:flex;align-items:center;justify-content:center;color:var(--accent-red);cursor:pointer;flex-shrink:0;';
       delBtn.innerHTML = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M9 7V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2m2 0-.8 12a2 2 0 0 1-2 1.8H9.8a2 2 0 0 1-2-1.8L7 7"></path></svg>';
       delBtn.onclick = function(){ deletePeriodEntry(d.getTime()); };
+      row.appendChild(label);
+      row.appendChild(delBtn);
+      el.appendChild(row);
+    });
+  }
+
+  /* Symptoms defaulted to "today only" with no way to see or fix a past entry —
+     same class of gap markPeriod fixed for periods. openSymptomsSheet is the one
+     entry point now (all 4 FAB triggers call it) so date + form state + history
+     are always in sync when the sheet opens. */
+  function openSymptomsSheet(dateStr) {
+    var todayIso = midnight(new Date()).toISOString().slice(0, 10);
+    var target = dateStr || todayIso;
+    var dateInput = document.getElementById('symptomDate');
+    dateInput.max = todayIso;
+    dateInput.value = target;
+    loadSymptomEntryIntoForm(target);
+    renderSymptomHistory();
+    openSheet('symptoms');
+  }
+  function loadSymptomEntryIntoForm(dateStr) {
+    var entry = loadSymptomLog().filter(function(e){ return e.date === dateStr; })[0] || null;
+    var selectedSymptoms = entry ? entry.symptoms : [];
+    document.querySelectorAll('#symptomGrid .chip').forEach(function(chip){
+      var label = chip.querySelector('span').textContent;
+      chip.classList.toggle('selected', selectedSymptoms.indexOf(label) !== -1);
+    });
+    var severity = entry ? entry.severity : 'Medio';
+    document.querySelectorAll('.severity-pill').forEach(function(p){
+      p.classList.toggle('active', p.textContent === severity);
+    });
+    document.getElementById('symptomNotes').value = entry ? entry.notes : '';
+  }
+  function deleteSymptomEntry(dateStr) {
+    var log = loadSymptomLog().filter(function(e){ return e.date !== dateStr; });
+    saveSymptomLog(log);
+    renderPrediction();
+    renderSymptomHistory();
+    if (document.getElementById('symptomDate').value === dateStr) loadSymptomEntryIntoForm(dateStr);
+  }
+  function renderSymptomHistory() {
+    var el = document.getElementById('symptomHistoryList');
+    if (!el) return;
+    el.innerHTML = '';
+    var log = loadSymptomLog().slice().sort(function(a, b){ return b.date.localeCompare(a.date); });
+    if (!log.length) {
+      var empty = document.createElement('div');
+      empty.style.cssText = 'padding:16px;text-align:center;font-size:12.5px;color:var(--text-faint);';
+      empty.textContent = 'Todavía no has registrado ningún día';
+      el.appendChild(empty);
+      return;
+    }
+    log.forEach(function(entry, i){
+      var d = midnight(new Date(entry.date + 'T00:00:00'));
+      var row = document.createElement('div');
+      row.style.cssText = 'display:flex;align-items:center;justify-content:space-between;padding:13px 16px;cursor:pointer;' + (i < log.length - 1 ? 'border-bottom:var(--row-border);' : '');
+      var label = document.createElement('span');
+      label.style.cssText = 'font-size:13.5px;font-weight:600;';
+      var count = entry.symptoms ? entry.symptoms.length : 0;
+      label.textContent = MONTHS_ES[d.getMonth()] + ' ' + d.getDate() + ', ' + d.getFullYear() + (count ? ' · ' + count + (count === 1 ? ' síntoma' : ' síntomas') : '');
+      row.onclick = function(){ document.getElementById('symptomDate').value = entry.date; loadSymptomEntryIntoForm(entry.date); };
+      var delBtn = document.createElement('div');
+      delBtn.style.cssText = 'width:30px;height:30px;border-radius:10px;display:flex;align-items:center;justify-content:center;color:var(--accent-red);cursor:pointer;flex-shrink:0;';
+      delBtn.innerHTML = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M9 7V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2m2 0-.8 12a2 2 0 0 1-2 1.8H9.8a2 2 0 0 1-2-1.8L7 7"></path></svg>';
+      delBtn.onclick = function(e){ e.stopPropagation(); deleteSymptomEntry(entry.date); };
       row.appendChild(label);
       row.appendChild(delBtn);
       el.appendChild(row);
